@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mis Gastos PRO v0.1</title>
+    <title>Mis Gastos PRO v0.1.1</title>
     
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2331/2331966.png">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2331/2331966.png">
@@ -17,15 +17,10 @@
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
             background-color: #12141c; 
             color: #e0e0e0;
-            padding: 15px; 
-            padding-bottom: 90px;
+            padding: 15px; padding-bottom: 90px;
         }
         .container { max-width: 450px; margin: 0 auto; position: relative; }
-        
-        .version-tag { 
-            position: absolute; top: -5px; right: 5px; 
-            font-size: 10px; color: #454a5f; font-family: monospace; 
-        }
+        .version-tag { position: absolute; top: -5px; right: 5px; font-size: 10px; color: #454a5f; font-family: monospace; }
 
         .header { text-align: center; margin: 10px 0 25px; }
         .header h1 { font-size: 26px; color: #ffffff; letter-spacing: -0.5px; margin-bottom: 5px; }
@@ -34,59 +29,47 @@
         
         .tabs { 
             display: flex; gap: 5px; margin-bottom: 25px; 
-            background: #1e212b; padding: 6px; border-radius: 16px;
-            border: 1px solid #2d313f;
+            background: #1e212b; padding: 6px; border-radius: 16px; border: 1px solid #2d313f;
         }
         .tab { 
             flex: 1; padding: 12px 5px; border: none; background: transparent; 
-            color: #8a8d9b; font-weight: 600; cursor: pointer; 
-            border-radius: 12px; font-size: 13px; transition: all 0.2s;
+            color: #8a8d9b; font-weight: 600; cursor: pointer; border-radius: 12px; font-size: 13px;
         }
         .tab.active { background: #3d5afe; color: white; box-shadow: 0 4px 12px rgba(61, 90, 254, 0.2); }
         
-        .section { display: none; animation: fadeIn 0.3s ease; }
+        .section { display: none; }
         .section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-        .card { 
-            background: #1e212b; border-radius: 20px; padding: 20px; 
-            margin-bottom: 15px; border: 1px solid #2d313f;
-        }
+        .card { background: #1e212b; border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid #2d313f; }
         
-        /* BOTONES SOBRIOS */
-        .btn { padding: 14px; border: none; border-radius: 14px; font-weight: 600; width: 100%; margin-bottom: 10px; font-size: 14px; cursor: pointer; transition: filter 0.2s; }
-        .btn:active { filter: brightness(1.2); }
-        
+        .btn { padding: 14px; border: none; border-radius: 14px; font-weight: 600; width: 100%; margin-bottom: 10px; font-size: 14px; cursor: pointer; }
         .btn-income { background: #1e212b; color: #3d5afe; border: 1px solid #3d5afe; } 
         .btn-gnc { background: #2d1a1a; color: #ff6b6b; border: 1px solid #4a2a2a; }
         .btn-comida { background: #2d261a; color: #ffcc66; border: 1px solid #4a3e2a; }
         .btn-varios { background: #1e212b; color: #a0a0a0; border: 1px solid #2d313f; }
-        
         .btn-excel { background: #1b4332; color: #95d5b2; margin-top: 20px; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-primary { background: transparent; color: #3d5afe; border: 2px dashed #3d5afe; margin-top: 5px; }
 
         .balance-box { 
             background: linear-gradient(135deg, #1e212b, #2d313f); 
-            color: white; padding: 25px; border-radius: 20px; border: 1px solid #3d5afe;
-            text-align: center; margin-bottom: 20px;
+            color: white; padding: 25px; border-radius: 20px; border: 1px solid #3d5afe; text-align: center; margin-bottom: 20px;
         }
         
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
         .modal-content { background: #1e212b; border-radius: 24px; padding: 25px; width: 90%; max-width: 340px; border: 1px solid #2d313f; }
-        .modal h3 { color: white; margin-bottom: 20px; text-align: center; }
         .modal input { width: 100%; padding: 14px; background: #12141c; border: 1px solid #2d313f; border-radius: 12px; margin: 10px 0; color: white; outline: none; font-size: 16px; }
         
         .history-item { background: #1e212b; padding: 15px; border-radius: 16px; margin-bottom: 10px; display: flex; justify-content: space-between; border: 1px solid #2d313f; align-items: center; }
-        .history-info small { color: #8a8d9b; font-size: 11px; }
+        .history-info small { color: #8a8d9b; font-size: 11px; display: block; margin-top: 2px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="version-tag">v0.1</div>
+        <div class="version-tag">v0.1.1</div>
         <div class="header">
             <h1>Mis Gastos</h1>
             <p id="currentMonth"></p>
-            <p id="liveClock"></p>
+            <div id="liveClock">Cargando hora...</div>
         </div>
         
         <div class="tabs">
@@ -107,7 +90,7 @@
         
         <div id="tab-balance" class="section">
             <div class="balance-box">
-                <div style="font-size: 12px; color: #3d5afe; font-weight: 700; margin-bottom: 5px; letter-spacing: 1px;">DISPONIBLE</div>
+                <div style="font-size: 11px; color: #3d5afe; font-weight: 700; margin-bottom: 5px; letter-spacing: 1px;">DISPONIBLE MENSUAL</div>
                 <div id="balanceAmount" style="font-size: 32px; font-weight: 700;">$0</div>
             </div>
             <div class="card">
@@ -118,6 +101,10 @@
         
         <div id="tab-diarios" class="section">
             <div class="card">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px; text-align:center;">
+                    <div><small style="color:#8a8d9b">⛽ GNC Hoy</small><div id="gncHoy" style="color:#ff6b6b; font-weight:700; font-size:18px;">$0</div></div>
+                    <div><small style="color:#8a8d9b">🍔 Comida Hoy</small><div id="comidaHoy" style="color:#ffcc66; font-weight:700; font-size:18px;">$0</div></div>
+                </div>
                 <button class="btn btn-gnc" onclick="openDailyModal('GNC')">⛽ Gasto GNC</button>
                 <button class="btn btn-comida" onclick="openDailyModal('Comida')">🍔 Gasto Comida</button>
                 <button class="btn btn-varios" onclick="openDailyModal('Varios')">📦 Otros Gastos</button>
@@ -133,7 +120,7 @@
     <div class="modal" id="modal">
         <div class="modal-content">
             <h3 id="modalTitle"></h3>
-            <input type="text" id="modalName" placeholder="Nombre (Ej: Alquiler)">
+            <input type="text" id="modalName" placeholder="Nombre">
             <input type="number" id="modalAmount" placeholder="Monto $" inputmode="numeric">
             <input type="date" id="modalDate">
             <div style="display:flex; gap:10px; margin-top:10px;">
@@ -144,18 +131,18 @@
     </div>
 
     <script>
-        var categories = JSON.parse(localStorage.getItem('categories')) || [
+        let categories = JSON.parse(localStorage.getItem('categories')) || [
             {id:1,name:'Colegio',goal:0,current:0},
             {id:2,name:'Internet',goal:0,current:0},
             {id:3,name:'Seguro',goal:0,current:0}
         ];
-        var expenses = JSON.parse(localStorage.getItem('expenses')) || [];
-        var incomes = JSON.parse(localStorage.getItem('incomes')) || [];
-        var currentType = '', currentId = null;
+        let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+        let incomes = JSON.parse(localStorage.getItem('incomes')) || [];
+        let currentType = '', currentId = null;
 
         function updateClock() {
-            var now = new Date();
-            var options = { weekday: 'long', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            const now = new Date();
+            const options = { weekday: 'long', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit' };
             document.getElementById('liveClock').textContent = now.toLocaleDateString('es-AR', options).replace(',', ' |');
         }
 
@@ -163,9 +150,7 @@
             document.getElementById('currentMonth').textContent = new Date().toLocaleDateString('es-AR',{month:'long',year:'numeric'});
             updateClock(); 
             setInterval(updateClock, 1000);
-            renderCategories(); 
-            updateTotals(); 
-            renderHistory();
+            renderAll();
         }
 
         function showTab(t) {
@@ -173,6 +158,13 @@
             document.querySelectorAll('.tab').forEach(tb => tb.classList.remove('active'));
             document.getElementById('tab-'+t).classList.add('active');
             event.currentTarget.classList.add('active');
+            renderAll();
+        }
+
+        function renderAll() {
+            renderCategories();
+            updateTotals();
+            renderHistory();
         }
 
         function renderCategories() {
@@ -199,29 +191,49 @@
         }
 
         function updateTotals() {
-            let now = new Date(), m = now.getMonth(), y = now.getFullYear();
-            let incTotal = incomes.filter(i=>{let d=new Date(i.date); return d.getMonth()===m && d.getFullYear()===y}).reduce((s,i)=>s+i.amount,0);
-            let expTotal = expenses.filter(e=>{let d=new Date(e.date); return d.getMonth()===m && d.getFullYear()===y}).reduce((s,e)=>s+e.amount,0);
-            document.getElementById('balanceAmount').textContent = '$'+(incTotal-expTotal).toLocaleString();
+            const now = new Date();
+            const m = now.getMonth(), y = now.getFullYear();
+            const todayStr = now.toISOString().split('T')[0];
+
+            let incM = incomes.filter(i => { let d=new Date(i.fullDate); return d.getMonth()===m && d.getFullYear()===y }).reduce((s,i)=>s+i.amount,0);
+            let expM = expenses.filter(e => { let d=new Date(e.fullDate); return d.getMonth()===m && d.getFullYear()===y }).reduce((s,e)=>s+e.amount,0);
+            
+            document.getElementById('balanceAmount').textContent = '$' + (incM - expM).toLocaleString();
+            
+            let gncH = expenses.filter(e => e.type === 'GNC' && e.fullDate.startsWith(todayStr)).reduce((s,e)=>s+e.amount,0);
+            let comH = expenses.filter(e => e.type === 'Comida' && e.fullDate.startsWith(todayStr)).reduce((s,e)=>s+e.amount,0);
+            
+            document.getElementById('gncHoy').textContent = '$' + gncH.toLocaleString();
+            document.getElementById('comidaHoy').textContent = '$' + comH.toLocaleString();
         }
 
         function renderHistory() {
-            let all = [...expenses.map(e=>({...e,k:'exp'})), ...incomes.map(i=>({...i,k:'inc'}))].sort((a,b)=>new Date(b.date)-new Date(a.date));
+            let all = [...expenses.map(e=>({...e,k:'exp'})), ...incomes.map(i=>({...i,k:'inc'}))];
+            all.sort((a,b) => new Date(b.fullDate) - new Date(a.fullDate));
+            
             let html = '';
-            all.forEach(m => {
+            all.slice(0, 20).forEach(m => {
                 let icon = m.type==='GNC'?'⛽':m.type==='Comida'?'🍔':m.type==='Varios'?'📦':m.type==='Didi'?'🟠':'⚫';
+                let dateObj = new Date(m.fullDate);
+                let dateStr = dateObj.toLocaleDateString('es-AR', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'});
+                
                 html += `<div class="history-item">
-                    <div class="history-info"><div>${icon} ${m.type}</div><small>${new Date(m.date).toLocaleDateString()}</small></div>
-                    <div style="font-weight:700; color:${m.k==='inc'?'#34c759':'#ff6b6b'}">${m.k==='inc'?'+':'-'}$${m.amount.toLocaleString()}</div>
+                    <div class="history-info">
+                        <div>${icon} ${m.type}</div>
+                        <small>${dateStr} hs</small>
+                    </div>
+                    <div style="font-weight:700; color:${m.k==='inc'?'#34c759':'#ff6b6b'}">
+                        ${m.k==='inc'?'+':'-'}$${m.amount.toLocaleString()}
+                    </div>
                 </div>`;
             });
-            document.getElementById('historyList').innerHTML = html || '<p style="text-align:center; color:#8a8d9b; padding:20px;">Sin movimientos este mes</p>';
+            document.getElementById('historyList').innerHTML = html || '<p style="text-align:center; color:#8a8d9b; padding:20px;">Sin movimientos</p>';
         }
 
         function openCategoryModal() { currentType='category'; resetModal(); document.getElementById('modalTitle').textContent='Nueva Categoría'; document.getElementById('modalName').style.display='block'; document.getElementById('modalDate').style.display='none'; document.getElementById('modal').style.display='flex'; }
-        function openPaymentModal(id) { currentType='payment'; currentId=id; resetModal(); document.getElementById('modalTitle').textContent='Registrar Pago'; document.getElementById('modalDate').style.display='none'; document.getElementById('modal').style.display='flex'; }
-        function openIncomeModal(t) { currentType='income'; currentId=t; resetModal(); document.getElementById('modalTitle').textContent='Ingreso '+t; document.getElementById('modal').style.display='flex'; }
-        function openDailyModal(t) { currentType='expense'; currentId=t; resetModal(); document.getElementById('modalTitle').textContent='Gasto '+t; document.getElementById('modal').style.display='flex'; }
+        function openPaymentModal(id) { currentId=id; currentType='payment'; resetModal(); document.getElementById('modalTitle').textContent='Registrar Pago'; document.getElementById('modalDate').style.display='none'; document.getElementById('modal').style.display='flex'; }
+        function openIncomeModal(t) { currentId=t; currentType='income'; resetModal(); document.getElementById('modalTitle').textContent='Ingreso '+t; document.getElementById('modal').style.display='flex'; }
+        function openDailyModal(t) { currentId=t; currentType='expense'; resetModal(); document.getElementById('modalTitle').textContent='Gasto '+t; document.getElementById('modal').style.display='flex'; }
         
         function resetModal() { 
             document.getElementById('modalName').style.display='none'; 
@@ -234,32 +246,45 @@
 
         function confirmAction() {
             let amt = parseFloat(document.getElementById('modalAmount').value);
-            if(isNaN(amt)) return;
-            let dateVal = document.getElementById('modalDate').value;
+            if(isNaN(amt) || amt <= 0) return;
             
+            let now = new Date();
+            let selectedDate = document.getElementById('modalDate').value; // YYYY-MM-DD
+            let timeStr = now.toTimeString().split(' ')[0]; // HH:MM:SS
+            let fullISODate = selectedDate + 'T' + timeStr;
+
             if(currentType==='category') {
-                categories.push({id:Date.now(), name:document.getElementById('modalName').value, goal:amt, current:0});
+                categories.push({id:Date.now(), name:document.getElementById('modalName').value || 'Sin nombre', goal:amt, current:0});
             } else if(currentType==='payment') {
                 let c = categories.find(x=>x.id===currentId);
-                if(c) c.current+=amt;
+                if(c) {
+                    c.current += amt;
+                    expenses.push({id:Date.now(), type:c.name, amount:amt, fullDate:fullISODate});
+                }
             } else if(currentType==='income') {
-                incomes.push({id:Date.now(), type:currentId, amount:amt, date:dateVal});
+                incomes.push({id:Date.now(), type:currentId, amount:amt, fullDate:fullISODate});
             } else if(currentType==='expense') {
-                expenses.push({id:Date.now(), type:currentId, amount:amt, date:dateVal});
+                expenses.push({id:Date.now(), type:currentId, amount:amt, fullDate:fullISODate});
             }
             
             localStorage.setItem('categories', JSON.stringify(categories));
             localStorage.setItem('expenses', JSON.stringify(expenses));
             localStorage.setItem('incomes', JSON.stringify(incomes));
             closeModal(); 
-            init();
+            renderAll();
         }
 
         function exportToExcel() {
-            let csv = "Fecha,Tipo,Monto\n" + [...expenses, ...incomes].map(r=>`${r.date},${r.type},${r.amount}`).join("\n");
+            let csv = "Fecha,Hora,Tipo,Movimiento,Monto\n";
+            let all = [...expenses.map(e=>({...e,k:'Gasto'})), ...incomes.map(i=>({...i,k:'Ingreso'}))];
+            all.forEach(r => {
+                let d = new Date(r.fullDate);
+                csv += `${d.toLocaleDateString()},${d.toLocaleTimeString()},${r.k},${r.type},${r.amount}\n`;
+            });
             let blob = new Blob([csv], {type:'text/csv'});
-            let a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Gastos_PRO.csv'; a.click();
+            let a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Mis_Gastos_PRO.csv'; a.click();
         }
+
         init();
     </script>
 </body>
