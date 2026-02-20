@@ -3,336 +3,323 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mis Gastos</title>
+    <title>Mis Gastos PRO</title>
     
-    <!-- ICONO DE LA APP -->
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2331/2331966.png">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2331/2331966.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#12141c">
     
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            background-color: #12141c; 
+            color: #e0e0e0;
             padding: 15px; 
-            color: #333;
-            padding-bottom: 80px;
+            padding-bottom: 90px;
         }
         .container { max-width: 450px; margin: 0 auto; }
-        .header { text-align: center; color: white; margin-bottom: 20px; }
-        .header h1 { font-size: 24px; margin-bottom: 5px; }
         
-        /* NAVEGACIÓN TABS */
-        .tabs { display: flex; gap: 8px; margin-bottom: 20px; background: rgba(255,255,255,0.2); padding: 5px; border-radius: 12px; }
-        .tab { flex: 1; padding: 12px 8px; border: none; background: transparent; color: white; font-weight: 600; cursor: pointer; border-radius: 8px; font-size: 13px; transition: 0.3s; }
-        .tab.active { background: white; color: #667eea; }
-        .tab:hover { background: rgba(255,255,255,0.3); }
-        .tab.active:hover { background: white; }
+        .header { text-align: center; margin: 10px 0 25px; }
+        .header h1 { font-size: 26px; color: #ffffff; letter-spacing: -0.5px; margin-bottom: 5px; }
+        .header p#currentMonth { color: #8a8d9b; text-transform: capitalize; font-size: 14px; margin-bottom: 2px; }
+        .header p#liveClock { color: #3d5afe; font-weight: 600; font-family: monospace; font-size: 15px; }
         
-        /* SECCIONES */
-        .section { display: none; animation: fadeIn 0.3s; }
+        .tabs { 
+            display: flex; gap: 5px; margin-bottom: 25px; 
+            background: #1e212b; padding: 6px; border-radius: 16px;
+            border: 1px solid #2d313f;
+        }
+        .tab { 
+            flex: 1; padding: 10px 5px; border: none; background: transparent; 
+            color: #8a8d9b; font-weight: 600; cursor: pointer; 
+            border-radius: 12px; font-size: 13px; transition: all 0.2s;
+        }
+        .tab.active { background: #3d5afe; color: white; box-shadow: 0 4px 12px rgba(61, 90, 254, 0.3); }
+        
+        .section { display: none; animation: fadeIn 0.3s ease; }
         .section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
         
-        .section-title { color: white; margin: 20px 0 10px; font-size: 16px; text-align: center; }
-        .progress-circle { background: white; border-radius: 15px; padding: 20px; text-align: center; margin-bottom: 15px; }
-        .circle-percent { font-size: 32px; font-weight: bold; color: #667eea; }
-        .balance-box { background: linear-gradient(135deg, #11998e, #38ef7d); color: white; padding: 10px; border-radius: 12px; text-align: center; margin-bottom: 15px; }
-        .balance-amount { font-size: 24px; font-weight: bold; }
+        .section-title { color: #ffffff; margin: 20px 0 12px; font-size: 15px; font-weight: 500; opacity: 0.9; }
+
+        .card { 
+            background: #1e212b; border-radius: 20px; padding: 20px; 
+            margin-bottom: 15px; border: 1px solid #2d313f;
+        }
+        
+        .circle-percent { font-size: 36px; font-weight: 800; color: #3d5afe; margin-bottom: 5px; }
+        .total-label { color: #8a8d9b; font-size: 14px; }
+
+        .balance-box { 
+            background: linear-gradient(135deg, #11998e, #38ef7d); 
+            color: white; padding: 20px; border-radius: 20px; 
+            text-align: center; margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(17, 153, 142, 0.2);
+        }
+        .balance-amount { font-size: 30px; font-weight: 700; }
+        
         .income-grid, .daily-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
-        .income-card { background: linear-gradient(135deg, #ff9500, #ff6b00); color: white; padding: 12px; border-radius: 10px; text-align: center; }
-        .income-card.uber { background: linear-gradient(135deg, #1a1a1a, #333); }
-        .daily-card { background: #f8f9fa; padding: 12px; border-radius: 10px; text-align: center; }
-        .btn { padding: 8px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%; margin-bottom: 8px; font-size: 14px; }
-        .btn-orange { background: linear-gradient(135deg, #ff9500, #ff6b00); color: white; }
-        .btn-black { background: linear-gradient(135deg, #1a1a1a, #333); color: white; }
-        .btn-red { background: #e74c3c; color: white; }
-        .btn-yellow { background: #f39c12; color: white; }
-        .btn-purple { background: #9b59b6; color: white; }
-        .btn-primary { background: rgba(255,255,255,0.3); color: white; border: 2px dashed white; }
-        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+        
+        .btn { 
+            padding: 12px; border: none; border-radius: 14px; 
+            font-weight: 600; cursor: pointer; width: 100%; 
+            margin-bottom: 10px; font-size: 14px; transition: filter 0.2s;
+        }
+        .btn-orange { background: #ff9500; color: white; }
+        .btn-black { background: #2d313f; color: white; border: 1px solid #454a5f; }
+        .btn-red { background: #ff3b30; color: white; }
+        .btn-yellow { background: #ffcc00; color: #000; }
+        .btn-purple { background: #af52de; color: white; }
+        .btn-primary { background: transparent; color: #3d5afe; border: 2px dashed #3d5afe; margin-top: 5px; }
+        .btn-excel { background: #34c759; color: white; margin-top: 20px; gap: 8px; display: flex; align-items: center; justify-content: center; }
+        
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
         .modal.active { display: flex; }
-        .modal-content { background: white; border-radius: 15px; padding: 20px; width: 90%; max-width: 320px; }
-        .modal input { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; margin: 10px 0; }
-        .modal-buttons { display: flex; gap: 8px; }
-        .modal button { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
-        .category-card { background: white; border-radius: 10px; padding: 8px; margin-bottom: 10px; }
-        .history-item { background: #f8f9fa; padding: 10px; border-radius: 8px; margin-bottom: 6px; display: flex; justify-content: space-between; }
+        .modal-content { background: #1e212b; border-radius: 24px; padding: 25px; width: 90%; max-width: 340px; border: 1px solid #2d313f; }
+        .modal h3 { color: white; margin-bottom: 20px; }
+        .modal input { 
+            width: 100%; padding: 14px; background: #12141c; 
+            border: 1px solid #2d313f; border-radius: 12px; 
+            margin: 10px 0; font-size: 16px; color: white; outline: none;
+        }
+        
+        .history-item { 
+            background: #1e212b; padding: 15px; border-radius: 16px; 
+            margin-bottom: 10px; display: flex; justify-content: space-between; 
+            align-items: center; border: 1px solid #2d313f;
+        }
+        .history-info small { color: #8a8d9b; font-size: 11px; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>💰 Mis Gastos</h1>
+            <h1>Mis Gastos</h1>
             <p id="currentMonth"></p>
+            <p id="liveClock"></p>
         </div>
         
-        <!-- NAVEGACIÓN -->
         <div class="tabs">
-            <button class="tab active" onclick="showTab('gastos')">📅 Gastos</button>
-            <button class="tab" onclick="showTab('balance')">💵 Balance</button>
-            <button class="tab" onclick="showTab('diarios')">📱 Diarios</button>
-            <button class="tab" onclick="showTab('historial')">📋 Historial</button>
+            <button class="tab active" onclick="showTab('gastos')">Gastos</button>
+            <button class="tab" onclick="showTab('balance')">Balance</button>
+            <button class="tab" onclick="showTab('diarios')">Diarios</button>
+            <button class="tab" onclick="showTab('historial')">Historial</button>
         </div>
-        
-        <!-- TAB 1: GASTOS MENSUALES -->
+
         <div id="tab-gastos" class="section active">
-            <h2 class="section-title">📅 Gastos Mensuales</h2>
-            <div class="progress-circle">
+            <div class="card" style="text-align: center;">
                 <div class="circle-percent" id="totalPercent">0%</div>
-                <div><span id="totalPaid">$0</span> / <span id="totalGoal">$0</span></div>
+                <div class="total-label">Pagado: <span id="totalPaid" style="color:white; font-weight:600;">$0</span> de <span id="totalGoal">$0</span></div>
             </div>
-            <button class="btn btn-primary" onclick="openCategoryModal()">+ Agregar Categoria</button>
             <div id="categoriesList"></div>
+            <button class="btn btn-primary" onclick="openCategoryModal()">+ Nueva Categoria</button>
         </div>
         
-        <!-- TAB 2: BALANCE E INGRESOS -->
         <div id="tab-balance" class="section">
-            <h2 class="section-title">💰 Balance del Mes</h2>
-            <div class="balance-box"><div class="balance-amount" id="balanceAmount">$0</div></div>
-            
-            <h2 class="section-title">💵 Ingresos</h2>
-            <div style="background:white;border-radius:15px;padding:15px;margin-bottom:15px;">
+            <div class="balance-box" id="balanceBox">
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;">DISPONIBLE</div>
+                <div class="balance-amount" id="balanceAmount">$0</div>
+            </div>
+            <h2 class="section-title">Ingresos Mensuales</h2>
+            <div class="card">
                 <div class="income-grid">
-                    <div class="income-card"><div style="font-size:24px;">🟠</div><div>Didi</div><div style="font-size:22px;font-weight:bold;" id="totalDidi2">$0</div></div>
-                    <div class="income-card uber"><div style="font-size:24px;">⚫</div><div>Uber</div><div style="font-size:22px;font-weight:bold;" id="totalUber2">$0</div></div>
+                    <div style="text-align:center;">
+                        <div style="font-size:12px; color:#8a8d9b;">🟠 DIDI</div>
+                        <div id="totalDidi2" style="font-size:18px; font-weight:700;">$0</div>
+                    </div>
+                    <div style="text-align:center;">
+                        <div style="font-size:12px; color:#8a8d9b;">⚫ UBER</div>
+                        <div id="totalUber2" style="font-size:18px; font-weight:700;">$0</div>
+                    </div>
                 </div>
-                <button class="btn btn-orange" onclick="openIncomeModal('Didi')">🟠 Didi</button>
-                <button class="btn btn-black" onclick="openIncomeModal('Uber')">⚫ Uber</button>
+                <button class="btn btn-orange" onclick="openIncomeModal('Didi')">Ingreso Didi</button>
+                <button class="btn btn-black" onclick="openIncomeModal('Uber')">Ingreso Uber</button>
             </div>
         </div>
         
-        <!-- TAB 3: GASTOS DIARIOS -->
         <div id="tab-diarios" class="section">
-            <h2 class="section-title">📱 Gastos Diarios <span id="todayLabel" style="font-size:12px;display:block;margin-top:5px;opacity:0.9;"></span></h2>
-            <div style="background:white;border-radius:15px;padding:15px;margin-bottom:15px;">
+            <h2 class="section-title" id="todayLabel"></h2>
+            <div class="card">
                 <div class="daily-grid">
-                    <div class="daily-card" style="border-top:3px solid #e74c3c;"><div style="font-size:24px;">⛽</div><div>GNC</div><div style="font-size:22px;font-weight:bold;color:#e74c3c;" id="totalGNC2">$0</div></div>
-                    <div class="daily-card" style="border-top:3px solid #f39c12;"><div style="font-size:24px;">🍔</div><div>Comida</div><div style="font-size:22px;font-weight:bold;color:#f39c12;" id="totalFood2">$0</div></div>
-                    <div class="daily-card" style="border-top:3px solid #9b59b6;"><div style="font-size:24px;">📦</div><div>Varios</div><div style="font-size:22px;font-weight:bold;color:#9b59b6;" id="totalVarios2">$0</div></div>
+                    <div style="text-align:center;">
+                        <div style="font-size:12px; color:#8a8d9b;">⛽ GNC</div>
+                        <div id="totalGNC2" style="font-size:18px; font-weight:700; color:#ff3b30;">$0</div>
+                    </div>
+                    <div style="text-align:center;">
+                        <div style="font-size:12px; color:#8a8d9b;">🍔 COMIDA</div>
+                        <div id="totalFood2" style="font-size:18px; font-weight:700; color:#ffcc00;">$0</div>
+                    </div>
                 </div>
-                <button class="btn btn-red" onclick="openDailyModal('GNC')">⛽ GNC</button>
-                <button class="btn btn-yellow" onclick="openDailyModal('Comida')">🍔 Comida</button>
-                <button class="btn btn-purple" onclick="openDailyModal('Varios')">📦 Varios</button>
+                <button class="btn btn-red" onclick="openDailyModal('GNC')">⛽ Gasto GNC</button>
+                <button class="btn btn-yellow" onclick="openDailyModal('Comida')">🍔 Gasto Comida</button>
+                <button class="btn btn-purple" onclick="openDailyModal('Varios')">📦 Otros Gastos</button>
             </div>
         </div>
         
-        <!-- TAB 4: HISTORIAL -->
         <div id="tab-historial" class="section">
-            <h2 class="section-title">📋 Historial del Mes</h2>
-            <div style="background:white;border-radius:15px;padding:15px;">
-                <div id="historyList"></div>
-            </div>
+            <div id="historyList"></div>
+            <button class="btn btn-excel" onclick="exportToExcel()">📊 Exportar a Excel</button>
         </div>
     </div>
     
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h3 id="modalTitle" style="margin-bottom:15px;text-align:center;"></h3>
-            <input type="text" id="modalName" placeholder="Nombre" style="display:none;">
-            <input type="number" id="modalAmount" placeholder="Monto" inputmode="numeric">
+            <h3 id="modalTitle"></h3>
+            <input type="text" id="modalName" placeholder="Nombre (Ej: Alquiler)">
+            <input type="number" id="modalAmount" placeholder="Monto $" inputmode="numeric">
             <input type="date" id="modalDate">
-            <div class="modal-buttons">
-                <button style="background:#e0e0e0;" onclick="closeModal()">Cancelar</button>
-                <button style="background:#667eea;color:white;" onclick="confirmAction()">Guardar</button>
+            <div style="display:flex; gap:10px; margin-top:10px;">
+                <button class="btn" style="background:#2d313f; color:white;" onclick="closeModal()">Cerrar</button>
+                <button class="btn" style="background:#3d5afe; color:white;" onclick="confirmAction()">Guardar</button>
             </div>
         </div>
     </div>
 
     <script>
-        var categories = JSON.parse(localStorage.getItem('categories')) || [{id:1,name:'Colegio',goal:0,current:0},{id:2,name:'Internet',goal:0,current:0},{id:3,name:'Seguro',goal:0,current:0}];
+        var categories = JSON.parse(localStorage.getItem('categories')) || [
+            {id:1,name:'Colegio',goal:0,current:0},
+            {id:2,name:'Internet',goal:0,current:0},
+            {id:3,name:'Seguro',goal:0,current:0}
+        ];
         var expenses = JSON.parse(localStorage.getItem('expenses')) || [];
         var incomes = JSON.parse(localStorage.getItem('incomes')) || [];
-        var currentType = '';
-        var currentId = null;
-        
-        document.getElementById('currentMonth').textContent = new Date().toLocaleDateString('es-AR',{month:'long',year:'numeric'});
-        document.getElementById('modalDate').value = new Date().toISOString().split('T')[0];
-        
-        // Mostrar fecha actual en la sección Diarios
-        var today = new Date();
-        var todayStr = today.toLocaleDateString('es-AR',{weekday:'long',day:'2-digit',month:'2-digit'});
-        document.getElementById('todayLabel').textContent = todayStr.charAt(0).toUpperCase() + todayStr.slice(1);
-        
+        var currentType = '', currentId = null;
+
+        function updateClock() {
+            var now = new Date();
+            var options = { weekday: 'long', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            var clockStr = now.toLocaleDateString('es-AR', options);
+            document.getElementById('liveClock').textContent = clockStr.replace(',', ' |');
+        }
+
         function init() {
-            renderCategories();
-            updateTotals();
-            renderHistory();
+            document.getElementById('currentMonth').textContent = new Date().toLocaleDateString('es-AR',{month:'long',year:'numeric'});
+            updateClock();
+            setInterval(updateClock, 1000);
+            var today = new Date();
+            document.getElementById('todayLabel').textContent = "Gastos de hoy: " + today.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit'});
+            renderCategories(); updateTotals(); renderHistory();
         }
-        
-        // NAVEGACIÓN TABS
+
         function showTab(tabName) {
-            document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
-            document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
-            document.getElementById('tab-' + tabName).classList.add('active');
-            event.target.classList.add('active');
-            updateTotals();
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById('tab-'+tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
         }
-        
+
         function renderCategories() {
-            var html = '';
-            categories.forEach(function(cat) {
-                var pct = cat.goal > 0 ? Math.round((cat.current/cat.goal)*100) : 0;
-                html += '<div class="category-card"><strong>'+cat.name+'</strong> $'+cat.current+(cat.goal>0?' / $'+cat.goal:'')+'<br>';
-                if(cat.goal>0) html += '<div style="height:6px;background:#e0e0e0;border-radius:3px;margin:8px 0;"><div style="height:100%;width:'+pct+'%;background:#667eea;border-radius:3px;"></div></div>';
-                html += '<button class="btn" style="background:#f0f0f0;" onclick="openPaymentModal('+cat.id+')">Agregar Pago</button></div>';
+            let html = '';
+            categories.forEach(cat => {
+                let pct = cat.goal > 0 ? Math.min(Math.round((cat.current/cat.goal)*100), 100) : 0;
+                html += `<div class="card" style="padding:15px; margin-bottom:10px;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                        <span style="font-weight:600;">${cat.name}</span>
+                        <span>$${cat.current.toLocaleString()} <small style="color:#8a8d9b">/ $${cat.goal.toLocaleString()}</small></span>
+                    </div>
+                    <div style="height:6px; background:#12141c; border-radius:3px;">
+                        <div style="height:100%; width:${pct}%; background:#3d5afe; border-radius:3px;"></div>
+                    </div>
+                    <button class="btn btn-black" style="margin-top:12px; padding:6px; font-size:12px;" onclick="openPaymentModal(${cat.id})">Registrar Pago</button>
+                </div>`;
             });
             document.getElementById('categoriesList').innerHTML = html;
-            var totalGoal = categories.reduce(function(s,c){return s+(c.goal||0);},0);
-            var totalCurrent = categories.reduce(function(s,c){return s+c.current;},0);
-            var pct = totalGoal>0 ? Math.round((totalCurrent/totalGoal)*100) : 0;
-            document.getElementById('totalPercent').textContent = pct+'%';
-            document.getElementById('totalPaid').textContent = '$'+totalCurrent.toLocaleString();
-            document.getElementById('totalGoal').textContent = '$'+totalGoal.toLocaleString();
+            let tGoal = categories.reduce((s,c)=>s+(c.goal||0),0), tCur = categories.reduce((s,c)=>s+c.current,0);
+            document.getElementById('totalPercent').textContent = (tGoal>0?Math.round((tCur/tGoal)*100):0)+'%';
+            document.getElementById('totalPaid').textContent = '$'+tCur.toLocaleString();
+            document.getElementById('totalGoal').textContent = '$'+tGoal.toLocaleString();
         }
-        
+
         function updateTotals() {
-            var now = new Date();
-            var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            var monthlyExp = expenses.filter(function(e){
-                var d=new Date(e.date);
-                return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
-            });
-            var dailyExp = expenses.filter(function(e){
-                var d=new Date(e.date);
-                var expenseDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-                return expenseDate.getTime() === today.getTime();
-            });
-            var monthlyInc = incomes.filter(function(i){
-                var d=new Date(i.date);
-                return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
-            });
-            var gnc = dailyExp.filter(function(e){return e.type==='GNC';}).reduce(function(s,e){return s+e.amount;},0);
-            var food = dailyExp.filter(function(e){return e.type==='Comida';}).reduce(function(s,e){return s+e.amount;},0);
-            var varios = dailyExp.filter(function(e){return e.type==='Varios';}).reduce(function(s,e){return s+e.amount;},0);
-            var didi = monthlyInc.filter(function(i){return i.type==='Didi';}).reduce(function(s,i){return s+i.amount;},0);
-            var uber = monthlyInc.filter(function(i){return i.type==='Uber';}).reduce(function(s,i){return s+i.amount;},0);
-            var balance = (didi+uber)-(gnc+food+varios);
-            document.getElementById('totalGNC2').textContent = '$'+gnc.toLocaleString();
-            document.getElementById('totalFood2').textContent = '$'+food.toLocaleString();
-            document.getElementById('totalVarios2').textContent = '$'+varios.toLocaleString();
+            let now = new Date();
+            let mExp = expenses.filter(e => { let d=new Date(e.date); return d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear(); });
+            let mInc = incomes.filter(i => { let d=new Date(i.date); return d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear(); });
+            let didi = mInc.filter(i=>i.type==='Didi').reduce((s,i)=>s+i.amount,0);
+            let uber = mInc.filter(i=>i.type==='Uber').reduce((s,i)=>s+i.amount,0);
+            let out = mExp.reduce((s,e)=>s+e.amount,0);
+            let bal = (didi + uber) - out;
             document.getElementById('totalDidi2').textContent = '$'+didi.toLocaleString();
             document.getElementById('totalUber2').textContent = '$'+uber.toLocaleString();
-            document.getElementById('balanceAmount').textContent = (balance>=0?'+':'')+'$'+balance.toLocaleString();
-            document.getElementById('balanceAmount').style.color = balance>=0?'white':'#ffcccc';
-            if(balance<0) document.querySelector('.balance-box').style.background = 'linear-gradient(135deg, #e74c3c, #c0392b)';
+            document.getElementById('totalGNC2').textContent = '$'+mExp.filter(e=>e.type==='GNC').reduce((s,e)=>s+e.amount,0).toLocaleString();
+            document.getElementById('totalFood2').textContent = '$'+mExp.filter(e=>e.type==='Comida').reduce((s,e)=>s+e.amount,0).toLocaleString();
+            let balAmt = document.getElementById('balanceAmount');
+            balAmt.textContent = (bal>=0?'+':'') + '$' + bal.toLocaleString();
+            document.getElementById('balanceBox').style.background = bal >= 0 ? 'linear-gradient(135deg, #11998e, #38ef7d)' : '#ff3b30';
         }
-        
+
         function renderHistory() {
-            var now = new Date();
-            var all = [];
-            expenses.filter(function(e){
-                var d=new Date(e.date);
-                return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
-            }).forEach(function(e){
-                all.push({kind:'expense',category:e.type,amount:e.amount,date:e.date,id:e.id});
+            let now = new Date();
+            let all = [];
+            expenses.filter(e=>new Date(e.date).getMonth()===now.getMonth()).forEach(e=>all.push({...e, kind:'expense'}));
+            incomes.filter(i=>new Date(i.date).getMonth()===now.getMonth()).forEach(i=>all.push({...i, kind:'income'}));
+            all.sort((a,b)=> new Date(b.date) - new Date(a.date));
+            let html = '';
+            all.forEach(m => {
+                let icon = m.type==='GNC'?'⛽':m.type==='Comida'?'🍔':m.type==='Varios'?'📦':m.type==='Didi'?'🟠':'⚫';
+                let dStr = new Date(m.date).toLocaleString('es-AR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+                html += `<div class="history-item">
+                    <div class="history-info"><div>${icon} ${m.type}</div><small>${dStr} hs</small></div>
+                    <div style="font-weight:700; color:${m.kind==='income'?'#34c759':'#ff3b30'}">
+                        ${m.kind==='income'?'+':'-'}$${m.amount.toLocaleString()}
+                        <button onclick="deleteItem('${m.kind}',${m.id})" style="background:none; border:none; color:#8a8d9b; margin-left:10px; font-size:16px;">×</button>
+                    </div>
+                </div>`;
             });
-            incomes.filter(function(i){
-                var d=new Date(i.date);
-                return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
-            }).forEach(function(i){
-                all.push({kind:'income',category:i.type,amount:i.amount,date:i.date,id:i.id});
-            });
-            all.sort(function(a,b){return new Date(b.date)-new Date(a.date);});
-            var html = '';
-            all.forEach(function(m){
-                var icon = m.category==='GNC'?'⛽':m.category==='Comida'?'🍔':m.category==='Varios'?'📦':m.category==='Didi'?'🟠':'⚫';
-                var color = m.kind==='income'?'#27ae60':'#e74c3c';
-                var dateObj = new Date(m.date);
-                var dateStr = dateObj.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
-                html += '<div class="history-item"><div>'+icon+' '+m.category+'<br><small style="color:#7f8c8d;">'+dateStr+'</small></div><div style="color:'+color+';font-weight:bold;">'+(m.kind==='income'?'+':'-')+'$'+m.amount.toLocaleString()+' <button onclick="deleteItem(\''+m.kind+'\',\''+m.id+'\')" style="background:#e74c3c;color:white;border:none;padding:2px 6px;border-radius:4px;cursor:pointer;">X</button></div></div>';
-            });
-            document.getElementById('historyList').innerHTML = html || '<p style="text-align:center;color:#999;padding:20px;">Sin movimientos este mes</p>';
+            document.getElementById('historyList').innerHTML = html || '<p style="text-align:center; padding:20px; color:#8a8d9b;">Sin movimientos</p>';
         }
+
+        function openCategoryModal() { currentType='category'; resetModal(); document.getElementById('modalTitle').textContent='Nueva Categoría'; document.getElementById('modalName').style.display='block'; document.getElementById('modalDate').style.display='none'; document.getElementById('modal').classList.add('active'); }
+        function openPaymentModal(id) { currentType='payment'; currentId=id; resetModal(); document.getElementById('modalTitle').textContent='Registrar Pago'; document.getElementById('modalDate').style.display='none'; document.getElementById('modal').classList.add('active'); }
+        function openIncomeModal(t) { currentType='income'; currentId=t; resetModal(); document.getElementById('modalTitle').textContent='Ingreso '+t; document.getElementById('modal').classList.add('active'); }
+        function openDailyModal(t) { currentType='expense'; currentId=t; resetModal(); document.getElementById('modalTitle').textContent='Gasto '+t; document.getElementById('modal').classList.add('active'); }
         
-        function openPaymentModal(id) { 
-            currentType='payment'; 
-            currentId=id; 
-            document.getElementById('modalTitle').textContent='Agregar Pago'; 
-            document.getElementById('modalAmount').value='';
-            document.getElementById('modalName').style.display='none';
-            document.getElementById('modalDate').style.display='none';
-            document.getElementById('modal').classList.add('active'); 
+        function resetModal() { 
+            document.getElementById('modalName').style.display='none'; 
+            document.getElementById('modalDate').style.display='block'; 
+            document.getElementById('modalDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('modalAmount').value = ''; document.getElementById('modalName').value = ''; 
         }
-        function openCategoryModal() { 
-            currentType='category'; 
-            document.getElementById('modalTitle').textContent='Nueva Categoria'; 
-            document.getElementById('modalName').value='';
-            document.getElementById('modalAmount').value='';
-            document.getElementById('modalName').style.display='block';
-            document.getElementById('modalName').placeholder='Nombre de la categoria';
-            document.getElementById('modalDate').style.display='none';
-            document.getElementById('modal').classList.add('active'); 
-        }
-        function openIncomeModal(type) { 
-            currentType='income'; 
-            currentId=type; 
-            document.getElementById('modalTitle').textContent='Ingreso '+type; 
-            document.getElementById('modalAmount').value='';
-            document.getElementById('modalName').style.display='none';
-            document.getElementById('modalDate').style.display='block';
-            document.getElementById('modal').classList.add('active'); 
-        }
-        function openDailyModal(type) { 
-            currentType='expense'; 
-            currentId=type; 
-            document.getElementById('modalTitle').textContent='Gasto '+type; 
-            document.getElementById('modalAmount').value='';
-            document.getElementById('modalName').style.display='none';
-            document.getElementById('modalDate').style.display='block';
-            document.getElementById('modal').classList.add('active'); 
-        }
-        function closeModal() { 
-            document.getElementById('modal').classList.remove('active'); 
-        }
-        
+        function closeModal() { document.getElementById('modal').classList.remove('active'); }
+
         function confirmAction() {
-            var amount = parseFloat(document.getElementById('modalAmount').value);
-            // CORRECCIÓN DE FECHA - Usa fecha local en lugar de UTC
-            var date = new Date().toLocaleDateString('es-AR',{year:'numeric',month:'2-digit',day:'2-digit'}).split('/').reverse().join('-');
-            var name = document.getElementById('modalName').value;
-            
-            if(currentType==='payment') {
-                if(!amount||amount<=0){alert('Ingresa un monto válido');return;}
-                var cat = categories.find(function(c){return c.id===currentId;});
-                if(cat) { cat.current+=amount; localStorage.setItem('categories',JSON.stringify(categories)); }
-            } else if(currentType==='category') {
-                if(!name||name.trim()===''){alert('Ingresa un nombre');return;}
-                categories.push({id:Date.now(),name:name.trim(),goal:amount||0,current:0});
-                localStorage.setItem('categories',JSON.stringify(categories));
-            } else if(currentType==='income') {
-                if(!amount||amount<=0){alert('Ingresa un monto válido');return;}
-                incomes.push({id:Date.now(),type:currentId,amount:amount,date:date});
-                localStorage.setItem('incomes',JSON.stringify(incomes));
-            } else if(currentType==='expense') {
-                if(!amount||amount<=0){alert('Ingresa un monto válido');return;}
-                expenses.push({id:Date.now(),type:currentId,amount:amount,date:date});
-                localStorage.setItem('expenses',JSON.stringify(expenses));
-            }
-            closeModal();
+            let amount = parseFloat(document.getElementById('modalAmount').value);
+            let dateVal = document.getElementById('modalDate').value;
+            let name = document.getElementById('modalName').value;
+            let dateSave = new Date(dateVal + 'T' + new Date().toTimeString().split(' ')[0]).toISOString();
+            if(isNaN(amount)) return;
+            if(currentType==='category') categories.push({id:Date.now(), name, goal:amount, current:0});
+            else if(currentType==='payment') { let c = categories.find(x=>x.id===currentId); if(c) c.current+=amount; }
+            else if(currentType==='income') incomes.push({id:Date.now(), type:currentId, amount, date:dateSave});
+            else if(currentType==='expense') expenses.push({id:Date.now(), type:currentId, amount, date:dateSave});
+            localStorage.setItem('categories', JSON.stringify(categories));
+            localStorage.setItem('expenses', JSON.stringify(expenses));
+            localStorage.setItem('incomes', JSON.stringify(incomes));
+            closeModal(); init();
+        }
+
+        function deleteItem(k,id) {
+            if(!confirm('¿Eliminar?')) return;
+            if(k==='expense') expenses = expenses.filter(e=>e.id!==id);
+            else incomes = incomes.filter(i=>i.id!==id);
+            localStorage.setItem('expenses', JSON.stringify(expenses));
+            localStorage.setItem('incomes', JSON.stringify(incomes));
             init();
         }
-        
-        function deleteItem(kind,id) {
-      if(!confirm('Eliminar?')) return;
-            if(kind==='expense') {
-                expenses=expenses.filter(function(e){return e.id!=id;});
-                localStorage.setItem('expenses',JSON.stringify(expenses));
-            } else {
-                incomes=incomes.filter(function(i){return i.id!=id;});
-                localStorage.setItem('incomes',JSON.stringify(incomes));
-            }
-            init();
+
+        function exportToExcel() {
+            let all = [];
+            expenses.forEach(e=>all.push({F:new Date(e.date).toLocaleString(), T:'GASTO', C:e.type, M:e.amount}));
+            incomes.forEach(i=>all.push({F:new Date(i.date).toLocaleString(), T:'INGRESO', C:i.type, M:i.amount}));
+            if(!all.length) return;
+            let csv = "\ufeffFecha,Tipo,Categoria,Monto\n" + all.map(r=>`${r.F},${r.T},${r.C},${r.M}`).join("\n");
+            let blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+            let url = URL.createObjectURL(blob), a = document.createElement("a");
+            a.href = url; a.download = "Gastos_" + new Date().toLocaleDateString() + ".csv"; a.click();
         }
-        
-        window.onclick = function(e) {
-            if(e.target.classList.contains('modal')) closeModal();
-        };
-        
+
         init();
     </script>
 </body>
