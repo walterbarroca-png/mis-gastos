@@ -3,73 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mis Gastos PRO v0.1.1</title>
-    
-    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2331/2331966.png">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2331/2331966.png">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#12141c">
-    
+    <title>Mis Gastos PRO v0.1.2</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { 
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
-            background-color: #12141c; 
-            color: #e0e0e0;
-            padding: 15px; padding-bottom: 90px;
-        }
+        body { font-family: sans-serif; background-color: #12141c; color: #e0e0e0; padding: 15px; padding-bottom: 90px; }
         .container { max-width: 450px; margin: 0 auto; position: relative; }
-        .version-tag { position: absolute; top: -5px; right: 5px; font-size: 10px; color: #454a5f; font-family: monospace; }
+        .version-tag { position: absolute; top: -5px; right: 5px; font-size: 10px; color: #454a5f; }
 
         .header { text-align: center; margin: 10px 0 25px; }
-        .header h1 { font-size: 26px; color: #ffffff; letter-spacing: -0.5px; margin-bottom: 5px; }
-        .header p#currentMonth { color: #8a8d9b; text-transform: capitalize; font-size: 14px; margin-bottom: 2px; }
-        .header p#liveClock { color: #3d5afe; font-weight: 600; font-family: monospace; font-size: 15px; }
+        .header h1 { font-size: 26px; color: #ffffff; margin-bottom: 5px; }
+        .header p#currentMonth { color: #8a8d9b; text-transform: capitalize; font-size: 14px; }
         
-        .tabs { 
-            display: flex; gap: 5px; margin-bottom: 25px; 
-            background: #1e212b; padding: 6px; border-radius: 16px; border: 1px solid #2d313f;
-        }
-        .tab { 
-            flex: 1; padding: 12px 5px; border: none; background: transparent; 
-            color: #8a8d9b; font-weight: 600; cursor: pointer; border-radius: 12px; font-size: 13px;
-        }
-        .tab.active { background: #3d5afe; color: white; box-shadow: 0 4px 12px rgba(61, 90, 254, 0.2); }
+        /* COLOR AZUL RESTAURADO PARA LA HORA */
+        #liveClock { color: #3d5afe !important; font-weight: 600; font-family: monospace; font-size: 15px; margin-top: 5px; }
+        
+        .tabs { display: flex; gap: 5px; margin-bottom: 25px; background: #1e212b; padding: 6px; border-radius: 16px; border: 1px solid #2d313f; }
+        .tab { flex: 1; padding: 12px 5px; border: none; background: transparent; color: #8a8d9b; font-weight: 600; cursor: pointer; border-radius: 12px; font-size: 13px; }
+        .tab.active { background: #3d5afe; color: white; }
         
         .section { display: none; }
         .section.active { display: block; }
-
         .card { background: #1e212b; border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid #2d313f; }
-        
-        .btn { padding: 14px; border: none; border-radius: 14px; font-weight: 600; width: 100%; margin-bottom: 10px; font-size: 14px; cursor: pointer; }
-        .btn-income { background: #1e212b; color: #3d5afe; border: 1px solid #3d5afe; } 
-        .btn-gnc { background: #2d1a1a; color: #ff6b6b; border: 1px solid #4a2a2a; }
-        .btn-comida { background: #2d261a; color: #ffcc66; border: 1px solid #4a3e2a; }
-        .btn-varios { background: #1e212b; color: #a0a0a0; border: 1px solid #2d313f; }
-        .btn-excel { background: #1b4332; color: #95d5b2; margin-top: 20px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-primary { background: transparent; color: #3d5afe; border: 2px dashed #3d5afe; margin-top: 5px; }
 
-        .balance-box { 
-            background: linear-gradient(135deg, #1e212b, #2d313f); 
-            color: white; padding: 25px; border-radius: 20px; border: 1px solid #3d5afe; text-align: center; margin-bottom: 20px;
-        }
-        
+        /* BOTONES CON COLORES ORIGINALES RESTAURADOS */
+        .btn { padding: 14px; border: none; border-radius: 14px; font-weight: 600; width: 100%; margin-bottom: 10px; font-size: 14px; cursor: pointer; color: white; }
+        .btn-gnc { background-color: #ff3b30; } /* Rojo */
+        .btn-comida { background-color: #ffcc00; color: #000; } /* Amarillo */
+        .btn-otros { background-color: #af52de; } /* Violeta */
+        .btn-income { background: #1e212b; color: #3d5afe; border: 1px solid #3d5afe; }
+        .btn-primary { background: transparent; color: #3d5afe; border: 2px dashed #3d5afe; margin-top: 5px; }
+        .btn-excel { background: #28a745; margin-top: 20px; }
+
+        .balance-box { background: linear-gradient(135deg, #1e212b, #2d313f); padding: 25px; border-radius: 20px; border: 1px solid #3d5afe; text-align: center; margin-bottom: 20px; }
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
         .modal-content { background: #1e212b; border-radius: 24px; padding: 25px; width: 90%; max-width: 340px; border: 1px solid #2d313f; }
-        .modal input { width: 100%; padding: 14px; background: #12141c; border: 1px solid #2d313f; border-radius: 12px; margin: 10px 0; color: white; outline: none; font-size: 16px; }
+        .modal input { width: 100%; padding: 14px; background: #12141c; border: 1px solid #2d313f; border-radius: 12px; margin: 10px 0; color: white; font-size: 16px; }
         
         .history-item { background: #1e212b; padding: 15px; border-radius: 16px; margin-bottom: 10px; display: flex; justify-content: space-between; border: 1px solid #2d313f; align-items: center; }
-        .history-info small { color: #8a8d9b; font-size: 11px; display: block; margin-top: 2px; }
+        .history-info small { color: #8a8d9b; font-size: 11px; display: block; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="version-tag">v0.1.1</div>
+        <div class="version-tag">v0.1.2</div>
         <div class="header">
             <h1>Mis Gastos</h1>
             <p id="currentMonth"></p>
-            <div id="liveClock">Cargando hora...</div>
+            <div id="liveClock"></div>
         </div>
         
         <div class="tabs">
@@ -82,7 +62,7 @@
         <div id="tab-gastos" class="section active">
             <div class="card" style="text-align: center;">
                 <div id="totalPercent" style="font-size:36px; font-weight:800; color:#3d5afe;">0%</div>
-                <div style="color:#8a8d9b; font-size:14px;">Pagado: <span id="totalPaid" style="color:white; font-weight:600;">$0</span> de <span id="totalGoal" style="font-weight:600;">$0</span></div>
+                <div style="color:#8a8d9b; font-size:14px;">Pagado: <span id="totalPaid" style="color:white;">$0</span> de <span id="totalGoal">$0</span></div>
             </div>
             <div id="categoriesList"></div>
             <button class="btn btn-primary" onclick="openCategoryModal()">+ Nueva Categoria</button>
@@ -90,7 +70,7 @@
         
         <div id="tab-balance" class="section">
             <div class="balance-box">
-                <div style="font-size: 11px; color: #3d5afe; font-weight: 700; margin-bottom: 5px; letter-spacing: 1px;">DISPONIBLE MENSUAL</div>
+                <div style="font-size: 11px; color: #3d5afe; font-weight: 700; margin-bottom: 5px;">DISPONIBLE</div>
                 <div id="balanceAmount" style="font-size: 32px; font-weight: 700;">$0</div>
             </div>
             <div class="card">
@@ -102,12 +82,12 @@
         <div id="tab-diarios" class="section">
             <div class="card">
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px; text-align:center;">
-                    <div><small style="color:#8a8d9b">⛽ GNC Hoy</small><div id="gncHoy" style="color:#ff6b6b; font-weight:700; font-size:18px;">$0</div></div>
-                    <div><small style="color:#8a8d9b">🍔 Comida Hoy</small><div id="comidaHoy" style="color:#ffcc66; font-weight:700; font-size:18px;">$0</div></div>
+                    <div><small style="color:#8a8d9b">⛽ GNC Hoy</small><div id="gncH" style="color:#ff3b30; font-weight:700;">$0</div></div>
+                    <div><small style="color:#8a8d9b">🍔 Comida Hoy</small><div id="comH" style="color:#ffcc00; font-weight:700;">$0</div></div>
                 </div>
                 <button class="btn btn-gnc" onclick="openDailyModal('GNC')">⛽ Gasto GNC</button>
                 <button class="btn btn-comida" onclick="openDailyModal('Comida')">🍔 Gasto Comida</button>
-                <button class="btn btn-varios" onclick="openDailyModal('Varios')">📦 Otros Gastos</button>
+                <button class="btn btn-otros" onclick="openDailyModal('Varios')">📦 Otros Gastos</button>
             </div>
         </div>
         
@@ -119,23 +99,19 @@
 
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h3 id="modalTitle"></h3>
+            <h3 id="modalTitle" style="color:white; text-align:center; margin-bottom:15px;"></h3>
             <input type="text" id="modalName" placeholder="Nombre">
             <input type="number" id="modalAmount" placeholder="Monto $" inputmode="numeric">
             <input type="date" id="modalDate">
-            <div style="display:flex; gap:10px; margin-top:10px;">
-                <button class="btn btn-varios" onclick="closeModal()">Cerrar</button>
-                <button class="btn" style="background:#3d5afe; color:white;" onclick="confirmAction()">Guardar</button>
+            <div style="display:flex; gap:10px;">
+                <button class="btn" style="background:#454a5f" onclick="closeModal()">Cerrar</button>
+                <button class="btn" style="background:#3d5afe" onclick="confirmAction()">Guardar</button>
             </div>
         </div>
     </div>
 
     <script>
-        let categories = JSON.parse(localStorage.getItem('categories')) || [
-            {id:1,name:'Colegio',goal:0,current:0},
-            {id:2,name:'Internet',goal:0,current:0},
-            {id:3,name:'Seguro',goal:0,current:0}
-        ];
+        let categories = JSON.parse(localStorage.getItem('categories')) || [{id:1,name:'Colegio',goal:0,current:0},{id:2,name:'Internet',goal:0,current:0},{id:3,name:'Seguro',goal:0,current:0}];
         let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
         let incomes = JSON.parse(localStorage.getItem('incomes')) || [];
         let currentType = '', currentId = null;
@@ -148,8 +124,7 @@
 
         function init() {
             document.getElementById('currentMonth').textContent = new Date().toLocaleDateString('es-AR',{month:'long',year:'numeric'});
-            updateClock(); 
-            setInterval(updateClock, 1000);
+            updateClock(); setInterval(updateClock, 1000);
             renderAll();
         }
 
@@ -173,18 +148,15 @@
                 let pct = cat.goal > 0 ? Math.min(Math.round((cat.current/cat.goal)*100), 100) : 0;
                 html += `<div class="card" style="padding:15px; margin-bottom:10px;">
                     <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                        <span style="font-weight:600;">${cat.name}</span>
-                        <span>$${cat.current.toLocaleString()} / <small style="color:#8a8d9b">$${cat.goal.toLocaleString()}</small></span>
+                        <span>${cat.name}</span>
+                        <span>$${cat.current.toLocaleString()} / <small>$${cat.goal.toLocaleString()}</small></span>
                     </div>
-                    <div style="height:6px; background:#12141c; border-radius:3px;">
-                        <div style="height:100%; width:${pct}%; background:#3d5afe; border-radius:3px;"></div>
-                    </div>
-                    <button class="btn btn-varios" style="margin-top:12px; padding:8px; font-size:12px;" onclick="openPaymentModal(${cat.id})">Registrar Pago</button>
+                    <div style="height:6px; background:#12141c; border-radius:3px;"><div style="height:100%; width:${pct}%; background:#3d5afe; border-radius:3px;"></div></div>
+                    <button class="btn" style="background:#2d313f; margin-top:10px; padding:8px; font-size:12px;" onclick="openPaymentModal(${cat.id})">Registrar Pago</button>
                 </div>`;
             });
             document.getElementById('categoriesList').innerHTML = html;
-            let tGoal = categories.reduce((s,c)=>s+(c.goal||0),0);
-            let tCur = categories.reduce((s,c)=>s+c.current,0);
+            let tGoal = categories.reduce((s,c)=>s+(c.goal||0),0), tCur = categories.reduce((s,c)=>s+c.current,0);
             document.getElementById('totalPercent').textContent = (tGoal>0?Math.round((tCur/tGoal)*100):0)+'%';
             document.getElementById('totalPaid').textContent = '$'+tCur.toLocaleString();
             document.getElementById('totalGoal').textContent = '$'+tGoal.toLocaleString();
@@ -195,96 +167,64 @@
             const m = now.getMonth(), y = now.getFullYear();
             const todayStr = now.toISOString().split('T')[0];
 
-            let incM = incomes.filter(i => { let d=new Date(i.fullDate); return d.getMonth()===m && d.getFullYear()===y }).reduce((s,i)=>s+i.amount,0);
-            let expM = expenses.filter(e => { let d=new Date(e.fullDate); return d.getMonth()===m && d.getFullYear()===y }).reduce((s,e)=>s+e.amount,0);
-            
+            let incM = incomes.filter(i => { let d=new Date(i.fDate); return d.getMonth()===m && d.getFullYear()===y }).reduce((s,i)=>s+i.amount,0);
+            let expM = expenses.filter(e => { let d=new Date(e.fDate); return d.getMonth()===m && d.getFullYear()===y }).reduce((s,e)=>s+e.amount,0);
             document.getElementById('balanceAmount').textContent = '$' + (incM - expM).toLocaleString();
             
-            let gncH = expenses.filter(e => e.type === 'GNC' && e.fullDate.startsWith(todayStr)).reduce((s,e)=>s+e.amount,0);
-            let comH = expenses.filter(e => e.type === 'Comida' && e.fullDate.startsWith(todayStr)).reduce((s,e)=>s+e.amount,0);
-            
-            document.getElementById('gncHoy').textContent = '$' + gncH.toLocaleString();
-            document.getElementById('comidaHoy').textContent = '$' + comH.toLocaleString();
+            let gncH = expenses.filter(e => e.type === 'GNC' && e.fDate.startsWith(todayStr)).reduce((s,e)=>s+e.amount,0);
+            let comH = expenses.filter(e => e.type === 'Comida' && e.fDate.startsWith(todayStr)).reduce((s,e)=>s+e.amount,0);
+            document.getElementById('gncH').textContent = '$' + gncH.toLocaleString();
+            document.getElementById('comH').textContent = '$' + comH.toLocaleString();
         }
 
         function renderHistory() {
-            let all = [...expenses.map(e=>({...e,k:'exp'})), ...incomes.map(i=>({...i,k:'inc'}))];
-            all.sort((a,b) => new Date(b.fullDate) - new Date(a.fullDate));
-            
+            let all = [...expenses.map(e=>({...e,k:'exp'})), ...incomes.map(i=>({...i,k:'inc'}))].sort((a,b) => new Date(b.fDate) - new Date(a.fDate));
             let html = '';
             all.slice(0, 20).forEach(m => {
                 let icon = m.type==='GNC'?'⛽':m.type==='Comida'?'🍔':m.type==='Varios'?'📦':m.type==='Didi'?'🟠':'⚫';
-                let dateObj = new Date(m.fullDate);
-                let dateStr = dateObj.toLocaleDateString('es-AR', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'});
-                
+                let d = new Date(m.fDate);
+                let dStr = d.toLocaleDateString('es-AR', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'});
                 html += `<div class="history-item">
-                    <div class="history-info">
-                        <div>${icon} ${m.type}</div>
-                        <small>${dateStr} hs</small>
-                    </div>
-                    <div style="font-weight:700; color:${m.k==='inc'?'#34c759':'#ff6b6b'}">
-                        ${m.k==='inc'?'+':'-'}$${m.amount.toLocaleString()}
-                    </div>
+                    <div class="history-info"><div>${icon} ${m.type}</div><small>${dStr} hs</small></div>
+                    <div style="font-weight:700; color:${m.k==='inc'?'#34c759':'#ff6b6b'}">${m.k==='inc'?'+':'-'}$${m.amount.toLocaleString()}</div>
                 </div>`;
             });
-            document.getElementById('historyList').innerHTML = html || '<p style="text-align:center; color:#8a8d9b; padding:20px;">Sin movimientos</p>';
+            document.getElementById('historyList').innerHTML = html || '<p style="text-align:center;">Sin movimientos</p>';
         }
 
         function openCategoryModal() { currentType='category'; resetModal(); document.getElementById('modalTitle').textContent='Nueva Categoría'; document.getElementById('modalName').style.display='block'; document.getElementById('modalDate').style.display='none'; document.getElementById('modal').style.display='flex'; }
         function openPaymentModal(id) { currentId=id; currentType='payment'; resetModal(); document.getElementById('modalTitle').textContent='Registrar Pago'; document.getElementById('modalDate').style.display='none'; document.getElementById('modal').style.display='flex'; }
         function openIncomeModal(t) { currentId=t; currentType='income'; resetModal(); document.getElementById('modalTitle').textContent='Ingreso '+t; document.getElementById('modal').style.display='flex'; }
         function openDailyModal(t) { currentId=t; currentType='expense'; resetModal(); document.getElementById('modalTitle').textContent='Gasto '+t; document.getElementById('modal').style.display='flex'; }
-        
-        function resetModal() { 
-            document.getElementById('modalName').style.display='none'; 
-            document.getElementById('modalDate').style.display='block'; 
-            document.getElementById('modalDate').value = new Date().toISOString().split('T')[0]; 
-            document.getElementById('modalAmount').value = ''; 
-        }
-        
+        function resetModal() { document.getElementById('modalName').style.display='none'; document.getElementById('modalDate').style.display='block'; document.getElementById('modalDate').value = new Date().toISOString().split('T')[0]; document.getElementById('modalAmount').value = ''; }
         function closeModal() { document.getElementById('modal').style.display='none'; }
 
         function confirmAction() {
             let amt = parseFloat(document.getElementById('modalAmount').value);
             if(isNaN(amt) || amt <= 0) return;
-            
             let now = new Date();
-            let selectedDate = document.getElementById('modalDate').value; // YYYY-MM-DD
-            let timeStr = now.toTimeString().split(' ')[0]; // HH:MM:SS
-            let fullISODate = selectedDate + 'T' + timeStr;
+            let fDate = document.getElementById('modalDate').value + 'T' + now.toTimeString().split(' ')[0];
 
-            if(currentType==='category') {
-                categories.push({id:Date.now(), name:document.getElementById('modalName').value || 'Sin nombre', goal:amt, current:0});
-            } else if(currentType==='payment') {
-                let c = categories.find(x=>x.id===currentId);
-                if(c) {
-                    c.current += amt;
-                    expenses.push({id:Date.now(), type:c.name, amount:amt, fullDate:fullISODate});
-                }
-            } else if(currentType==='income') {
-                incomes.push({id:Date.now(), type:currentId, amount:amt, fullDate:fullISODate});
-            } else if(currentType==='expense') {
-                expenses.push({id:Date.now(), type:currentId, amount:amt, fullDate:fullISODate});
-            }
+            if(currentType==='category') categories.push({id:Date.now(), name:document.getElementById('modalName').value || 'S/N', goal:amt, current:0});
+            else if(currentType==='payment') { let c = categories.find(x=>x.id===currentId); if(c) { c.current += amt; expenses.push({id:Date.now(), type:c.name, amount:amt, fDate:fDate}); } }
+            else if(currentType==='income') incomes.push({id:Date.now(), type:currentId, amount:amt, fDate:fDate});
+            else if(currentType==='expense') expenses.push({id:Date.now(), type:currentId, amount:amt, fDate:fDate});
             
             localStorage.setItem('categories', JSON.stringify(categories));
             localStorage.setItem('expenses', JSON.stringify(expenses));
             localStorage.setItem('incomes', JSON.stringify(incomes));
-            closeModal(); 
-            renderAll();
+            closeModal(); renderAll();
         }
 
         function exportToExcel() {
-            let csv = "Fecha,Hora,Tipo,Movimiento,Monto\n";
-            let all = [...expenses.map(e=>({...e,k:'Gasto'})), ...incomes.map(i=>({...i,k:'Ingreso'}))];
-            all.forEach(r => {
-                let d = new Date(r.fullDate);
+            let csv = "Fecha,Hora,Tipo,Mov,Monto\n";
+            [...expenses.map(e=>({...e,k:'Gasto'})), ...incomes.map(i=>({...i,k:'Ingreso'}))].forEach(r => {
+                let d = new Date(r.fDate);
                 csv += `${d.toLocaleDateString()},${d.toLocaleTimeString()},${r.k},${r.type},${r.amount}\n`;
             });
             let blob = new Blob([csv], {type:'text/csv'});
-            let a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Mis_Gastos_PRO.csv'; a.click();
+            let a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Gastos.csv'; a.click();
         }
-
         init();
     </script>
 </body>
