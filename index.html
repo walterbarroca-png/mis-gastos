@@ -4,24 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mis Gastos</title>
+    
+    <!-- ICONO DE LA APP -->
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2331/2331966.png">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2331/2331966.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#667eea">
+    
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 15px; color: #333; padding-bottom: 80px; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px; 
+            color: #333;
+            padding-bottom: 80px;
+        }
         .container { max-width: 450px; margin: 0 auto; }
         .header { text-align: center; color: white; margin-bottom: 20px; }
         .header h1 { font-size: 24px; margin-bottom: 5px; }
+        
+        /* NAVEGACIÓN TABS */
         .tabs { display: flex; gap: 8px; margin-bottom: 20px; background: rgba(255,255,255,0.2); padding: 5px; border-radius: 12px; }
         .tab { flex: 1; padding: 12px 8px; border: none; background: transparent; color: white; font-weight: 600; cursor: pointer; border-radius: 8px; font-size: 13px; transition: 0.3s; }
         .tab.active { background: white; color: #667eea; }
+        .tab:hover { background: rgba(255,255,255,0.3); }
+        .tab.active:hover { background: white; }
+        
+        /* SECCIONES */
         .section { display: none; animation: fadeIn 0.3s; }
         .section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
         .section-title { color: white; margin: 20px 0 10px; font-size: 16px; text-align: center; }
         .progress-circle { background: white; border-radius: 15px; padding: 20px; text-align: center; margin-bottom: 15px; }
         .circle-percent { font-size: 32px; font-weight: bold; color: #667eea; }
@@ -31,8 +47,7 @@
         .income-card { background: linear-gradient(135deg, #ff9500, #ff6b00); color: white; padding: 12px; border-radius: 10px; text-align: center; }
         .income-card.uber { background: linear-gradient(135deg, #1a1a1a, #333); }
         .daily-card { background: #f8f9fa; padding: 12px; border-radius: 10px; text-align: center; }
-        .btn { padding: 8px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%; margin-bottom: 8px; font-size: 14px; }
-        .btn-orange { background: linear-gradient(135deg, #ff9500, #ff6b00); color: white; }
+        .btn { padding: 8px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%; margin-bottom: 8px; font-size: 14px; }        .btn-orange { background: linear-gradient(135deg, #ff9500, #ff6b00); color: white; }
         .btn-black { background: linear-gradient(135deg, #1a1a1a, #333); color: white; }
         .btn-red { background: #e74c3c; color: white; }
         .btn-yellow { background: #f39c12; color: white; }
@@ -47,18 +62,23 @@
         .category-card { background: white; border-radius: 10px; padding: 8px; margin-bottom: 10px; }
         .history-item { background: #f8f9fa; padding: 10px; border-radius: 8px; margin-bottom: 6px; display: flex; justify-content: space-between; }
     </style>
-</head><body>
+</head>
+<body>
     <div class="container">
         <div class="header">
             <h1>💰 Mis Gastos</h1>
             <p id="currentMonth"></p>
         </div>
+        
+        <!-- NAVEGACIÓN -->
         <div class="tabs">
             <button class="tab active" onclick="showTab('gastos')">📅 Gastos</button>
             <button class="tab" onclick="showTab('balance')">💵 Balance</button>
             <button class="tab" onclick="showTab('diarios')">📱 Diarios</button>
             <button class="tab" onclick="showTab('historial')">📋 Historial</button>
         </div>
+        
+        <!-- TAB 1: GASTOS MENSUALES -->
         <div id="tab-gastos" class="section active">
             <h2 class="section-title">📅 Gastos Mensuales</h2>
             <div class="progress-circle">
@@ -68,19 +88,23 @@
             <button class="btn btn-primary" onclick="openCategoryModal()">+ Agregar Categoria</button>
             <div id="categoriesList"></div>
         </div>
+        
+        <!-- TAB 2: BALANCE E INGRESOS -->
         <div id="tab-balance" class="section">
             <h2 class="section-title">💰 Balance del Mes</h2>
             <div class="balance-box"><div class="balance-amount" id="balanceAmount">$0</div></div>
+            
             <h2 class="section-title">💵 Ingresos</h2>
             <div style="background:white;border-radius:15px;padding:15px;margin-bottom:15px;">
-                <div class="income-grid">
-                    <div class="income-card"><div style="font-size:24px;">🟠</div><div>Didi</div><div style="font-size:22px;font-weight:bold;" id="totalDidi2">$0</div></div>
+                <div class="income-grid">                    <div class="income-card"><div style="font-size:24px;">🟠</div><div>Didi</div><div style="font-size:22px;font-weight:bold;" id="totalDidi2">$0</div></div>
                     <div class="income-card uber"><div style="font-size:24px;">⚫</div><div>Uber</div><div style="font-size:22px;font-weight:bold;" id="totalUber2">$0</div></div>
                 </div>
                 <button class="btn btn-orange" onclick="openIncomeModal('Didi')">🟠 Didi</button>
                 <button class="btn btn-black" onclick="openIncomeModal('Uber')">⚫ Uber</button>
             </div>
         </div>
+        
+        <!-- TAB 3: GASTOS DIARIOS -->
         <div id="tab-diarios" class="section">
             <h2 class="section-title">📱 Gastos Diarios <span id="todayLabel" style="font-size:12px;display:block;margin-top:5px;opacity:0.9;"></span></h2>
             <div style="background:white;border-radius:15px;padding:15px;margin-bottom:15px;">
@@ -94,12 +118,16 @@
                 <button class="btn btn-purple" onclick="openDailyModal('Varios')">📦 Varios</button>
             </div>
         </div>
+        
+        <!-- TAB 4: HISTORIAL -->
         <div id="tab-historial" class="section">
             <h2 class="section-title">📋 Historial del Mes</h2>
-            <div style="background:white;border-radius:15px;padding:15px;">                <div id="historyList"></div>
+            <div style="background:white;border-radius:15px;padding:15px;">
+                <div id="historyList"></div>
             </div>
         </div>
     </div>
+    
     <div class="modal" id="modal">
         <div class="modal-content">
             <h3 id="modalTitle" style="margin-bottom:15px;text-align:center;"></h3>
@@ -112,24 +140,41 @@
             </div>
         </div>
     </div>
-    <script>var categories = JSON.parse(localStorage.getItem('categories')) || [{id:1,name:'Colegio',goal:0,current:0},{id:2,name:'Internet',goal:0,current:0},{id:3,name:'Seguro',goal:0,current:0}];
+
+    <script>
+        var categories = JSON.parse(localStorage.getItem('categories')) || [{id:1,name:'Colegio',goal:0,current:0},{id:2,name:'Internet',goal:0,current:0},{id:3,name:'Seguro',goal:0,current:0}];
         var expenses = JSON.parse(localStorage.getItem('expenses')) || [];
         var incomes = JSON.parse(localStorage.getItem('incomes')) || [];
-        var currentType = '';
-        var currentId = null;
+        var currentType = '';        var currentId = null;
+        
         document.getElementById('currentMonth').textContent = new Date().toLocaleDateString('es-AR',{month:'long',year:'numeric'});
         document.getElementById('modalDate').value = new Date().toISOString().split('T')[0];
+        
+        // Mostrar fecha actual en la sección Diarios
         var today = new Date();
         var todayStr = today.toLocaleDateString('es-AR',{weekday:'long',day:'2-digit',month:'2-digit'});
         document.getElementById('todayLabel').textContent = todayStr.charAt(0).toUpperCase() + todayStr.slice(1);
-        function init() { renderCategories(); updateTotals(); renderHistory(); }
+        
+        function init() {
+            renderCategories();
+            updateTotals();
+            renderHistory();
+        }
+        
+        // NAVEGACIÓN TABS
         function showTab(tabName) {
+            // Ocultar todas las secciones
             document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
             document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+            
+            // Mostrar sección seleccionada
             document.getElementById('tab-' + tabName).classList.add('active');
             event.target.classList.add('active');
+            
+            // Actualizar totales al cambiar de tab
             updateTotals();
         }
+        
         function renderCategories() {
             var html = '';
             categories.forEach(function(cat) {
@@ -146,33 +191,74 @@
             document.getElementById('totalPaid').textContent = '$'+totalCurrent.toLocaleString();
             document.getElementById('totalGoal').textContent = '$'+totalGoal.toLocaleString();
         }
+        
         function updateTotals() {
             var now = new Date();
-            var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            var monthlyExp = expenses.filter(function(e){var d=new Date(e.date);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();});
-            var dailyExp = expenses.filter(function(e){var d=new Date(e.date);var expenseDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());return expenseDate.getTime() === today.getTime();});
-            var monthlyInc = incomes.filter(function(i){var d=new Date(i.date);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();});
+            var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());            
+            // Gastos mensuales (para el tab Gastos)
+            var monthlyExp = expenses.filter(function(e){
+                var d=new Date(e.date);
+                return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
+            });
+            
+            // Gastos de HOY (para el tab Diarios) - SE REINICIA AUTOMÁTICAMENTE
+            var dailyExp = expenses.filter(function(e){
+                var d=new Date(e.date);
+                var expenseDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+                return expenseDate.getTime() === today.getTime();
+            });
+            
+            // Ingresos mensuales
+            var monthlyInc = incomes.filter(function(i){
+                var d=new Date(i.date);
+                return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
+            });
+            
+            // Calcular totales DIARIOS (solo de HOY)
             var gnc = dailyExp.filter(function(e){return e.type==='GNC';}).reduce(function(s,e){return s+e.amount;},0);
             var food = dailyExp.filter(function(e){return e.type==='Comida';}).reduce(function(s,e){return s+e.amount;},0);
             var varios = dailyExp.filter(function(e){return e.type==='Varios';}).reduce(function(s,e){return s+e.amount;},0);
+            
+            // Calcular totales MENSUALES (para balance)
             var didi = monthlyInc.filter(function(i){return i.type==='Didi';}).reduce(function(s,i){return s+i.amount;},0);
             var uber = monthlyInc.filter(function(i){return i.type==='Uber';}).reduce(function(s,i){return s+i.amount;},0);
             var balance = (didi+uber)-(gnc+food+varios);
+            
+            // Actualizar totales DIARIOS en la sección Diarios
             document.getElementById('totalGNC2').textContent = '$'+gnc.toLocaleString();
             document.getElementById('totalFood2').textContent = '$'+food.toLocaleString();
             document.getElementById('totalVarios2').textContent = '$'+varios.toLocaleString();
+            
+            // Actualizar totales MENSUALES en la sección Balance
             document.getElementById('totalDidi2').textContent = '$'+didi.toLocaleString();
             document.getElementById('totalUber2').textContent = '$'+uber.toLocaleString();
             document.getElementById('balanceAmount').textContent = (balance>=0?'+':'')+'$'+balance.toLocaleString();
             document.getElementById('balanceAmount').style.color = balance>=0?'white':'#ffcccc';
             if(balance<0) document.querySelector('.balance-box').style.background = 'linear-gradient(135deg, #e74c3c, #c0392b)';
         }
+        
         function renderHistory() {
             var now = new Date();
             var all = [];
-            expenses.filter(function(e){var d=new Date(e.date);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).forEach(function(e){all.push({kind:'expense',category:e.type,amount:e.amount,date:e.date,id:e.id});});
-            incomes.filter(function(i){var d=new Date(i.date);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}).forEach(function(i){all.push({kind:'income',category:i.type,amount:i.amount,date:i.date,id:i.id});});
+            
+            // Todos los gastos del mes
+            expenses.filter(function(e){
+                var d=new Date(e.date);                return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
+            }).forEach(function(e){
+                all.push({kind:'expense',category:e.type,amount:e.amount,date:e.date,id:e.id});
+            });
+            
+            // Todos los ingresos del mes
+            incomes.filter(function(i){
+                var d=new Date(i.date);
+                return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
+            }).forEach(function(i){
+                all.push({kind:'income',category:i.type,amount:i.amount,date:i.date,id:i.id});
+            });
+            
+            // Ordenar por fecha (más reciente primero)
             all.sort(function(a,b){return new Date(b.date)-new Date(a.date);});
+            
             var html = '';
             all.forEach(function(m){
                 var icon = m.category==='GNC'?'⛽':m.category==='Comida'?'🍔':m.category==='Varios'?'📦':m.category==='Didi'?'🟠':'⚫';
@@ -183,23 +269,79 @@
             });
             document.getElementById('historyList').innerHTML = html || '<p style="text-align:center;color:#999;padding:20px;">Sin movimientos este mes</p>';
         }
-        function openPaymentModal(id) { currentType='payment'; currentId=id; document.getElementById('modalTitle').textContent='Agregar Pago'; document.getElementById('modalAmount').value=''; document.getElementById('modalName').style.display='none'; document.getElementById('modalDate').style.display='none'; document.getElementById('modal').classList.add('active'); }
-        function openCategoryModal() { currentType='category'; document.getElementById('modalTitle').textContent='Nueva Categoria'; document.getElementById('modalName').value=''; document.getElementById('modalAmount').value=''; document.getElementById('modalName').style.display='block'; document.getElementById('modalName').placeholder='Nombre de la categoria'; document.getElementById('modalDate').style.display='none'; document.getElementById('modal').classList.add('active'); }
-        function openIncomeModal(type) { currentType='income'; currentId=type; document.getElementById('modalTitle').textContent='Ingreso '+type; document.getElementById('modalAmount').value=''; document.getElementById('modalName').style.display='none'; document.getElementById('modalDate').style.display='block'; document.getElementById('modal').classList.add('active'); }
-        function openDailyModal(type) { currentType='expense'; currentId=type; document.getElementById('modalTitle').textContent='Gasto '+type; document.getElementById('modalAmount').value=''; document.getElementById('modalName').style.display='none'; document.getElementById('modalDate').style.display='block'; document.getElementById('modal').classList.add('active'); }
-        function closeModal() { document.getElementById('modal').classList.remove('active'); }
+        
+        function openPaymentModal(id) { 
+            currentType='payment'; 
+            currentId=id; 
+            document.getElementById('modalTitle').textContent='Agregar Pago'; 
+            document.getElementById('modalAmount').value='';
+            document.getElementById('modalName').style.display='none';
+            document.getElementById('modalDate').style.display='none';
+            document.getElementById('modal').classList.add('active'); 
+        }
+        function openCategoryModal() { 
+            currentType='category'; 
+            document.getElementById('modalTitle').textContent='Nueva Categoria'; 
+            document.getElementById('modalName').value='';
+            document.getElementById('modalAmount').value='';
+            document.getElementById('modalName').style.display='block';
+            document.getElementById('modalName').placeholder='Nombre de la categoria';
+            document.getElementById('modalDate').style.display='none';
+            document.getElementById('modal').classList.add('active'); 
+        }
+        function openIncomeModal(type) { 
+            currentType='income'; 
+            currentId=type; 
+            document.getElementById('modalTitle').textContent='Ingreso '+type;             document.getElementById('modalAmount').value='';
+            document.getElementById('modalName').style.display='none';
+            document.getElementById('modalDate').style.display='block';
+            document.getElementById('modal').classList.add('active'); 
+        }
+        function openDailyModal(type) { 
+            currentType='expense'; 
+            currentId=type; 
+            document.getElementById('modalTitle').textContent='Gasto '+type; 
+            document.getElementById('modalAmount').value='';
+            document.getElementById('modalName').style.display='none';
+            document.getElementById('modalDate').style.display='block';
+            document.getElementById('modal').classList.add('active'); 
+        }
+        function closeModal() { 
+            document.getElementById('modal').classList.remove('active'); 
+        }
+        
         function confirmAction() {
             var amount = parseFloat(document.getElementById('modalAmount').value);
             var date = document.getElementById('modalDate').value;
             var name = document.getElementById('modalName').value;
-            if(currentType==='payment') { if(!amount||amount<=0){alert('Ingresa un monto válido');return;} var cat = categories.find(function(c){return c.id===currentId;}); if(cat) { cat.current+=amount; localStorage.setItem('categories',JSON.stringify(categories)); } }
-            else if(currentType==='category') { if(!name||name.trim()===''){alert('Ingresa un nombre');return;} categories.push({id:Date.now(),name:name.trim(),goal:amount||0,current:0}); localStorage.setItem('categories',JSON.stringify(categories)); }
-            else if(currentType==='income') { if(!amount||amount<=0){alert('Ingresa un monto válido');return;} incomes.push({id:Date.now(),type:currentId,amount:amount,date:date}); localStorage.setItem('incomes',JSON.stringify(incomes)); }
-            else if(currentType==='expense') { if(!amount||amount<=0){alert('Ingresa un monto válido');return;} expenses.push({id:Date.now(),type:currentId,amount:amount,date:date}); localStorage.setItem('expenses',JSON.stringify(expenses)); }
+            
+            if(currentType==='payment') {
+                if(!amount||amount<=0){alert('Ingresa un monto válido');return;}
+                var cat = categories.find(function(c){return c.id===currentId;});
+                if(cat) { cat.current+=amount; localStorage.setItem('categories',JSON.stringify(categories)); }
+            } else if(currentType==='category') {
+                if(!name||name.trim()===''){alert('Ingresa un nombre');return;}
+                categories.push({id:Date.now(),name:name.trim(),goal:amount||0,current:0});
+                localStorage.setItem('categories',JSON.stringify(categories));
+            } else if(currentType==='income') {
+                if(!amount||amount<=0){alert('Ingresa un monto válido');return;}
+                incomes.push({id:Date.now(),type:currentId,amount:amount,date:date});
+                localStorage.setItem('incomes',JSON.stringify(incomes));
+            } else if(currentType==='expense') {
+                if(!amount||amount<=0){alert('Ingresa un monto válido');return;}
+                expenses.push({id:Date.now(),type:currentId,amount:amount,date:date});
+                localStorage.setItem('expenses',JSON.stringify(expenses));
+            }
             closeModal();
             init();
         }
-        function deleteItem(kind,id) { if(!confirm('Eliminar?')) return; if(kind==='expense') { expenses=expenses.filter(function(e){return e.id!=id;}); localStorage.setItem('expenses',JSON.stringify(expenses)); } else { incomes=incomes.filter(function(i){return i.id!=id;}); localStorage.setItem('incomes',JSON.stringify(incomes)); } init(); }
+        
+        function deleteItem(kind,id) {
+            if(!confirm('Eliminar?')) return;
+            if(kind==='expense') { expenses=expenses.filter(function(e){return e.id!=id;}); localStorage.setItem('expenses',JSON.stringify(expenses)); }
+            else { incomes=incomes.filter(function(i){return i.id!=id;}); localStorage.setItem('incomes',JSON.stringify(incomes)); }
+            init();
+        }        
         window.onclick = function(e) { if(e.target.classList.contains('modal')) closeModal(); };
         init();
     </script>
