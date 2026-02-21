@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mis Gastos PRO v0.1.4</title>
+    <title>Mis Gastos PRO v0.1.6</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: sans-serif; background-color: #12141c; color: #e0e0e0; padding: 15px; padding-bottom: 90px; }
@@ -21,7 +21,7 @@
         
         .section { display: none; }
         .section.active { display: block; }
-        .card { background: #1e212b; border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid #2d313f; }
+        .card { background: #1e212b; border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid #2d313f; position: relative; }
 
         .btn { padding: 14px; border: none; border-radius: 14px; font-weight: 600; width: 100%; margin-bottom: 10px; font-size: 14px; cursor: pointer; color: white; }
         .btn-gnc { background-color: #ff3b30; }
@@ -33,21 +33,26 @@
 
         .balance-box { background: linear-gradient(135deg, #1e212b, #2d313f); padding: 25px; border-radius: 20px; border: 1px solid #3d5afe; text-align: center; margin-bottom: 20px; }
         
-        /* ESTILO DEL TACHO DE BASURA */
-        .delete-btn { color: #ff3b30; font-size: 16px; padding: 10px; cursor: pointer; margin-left: 12px; filter: grayscale(0.3); transition: transform 0.1s; }
-        .delete-btn:active { transform: scale(1.3); filter: grayscale(0); }
+        .delete-btn { color: #ff3b30; font-size: 16px; padding: 10px; cursor: pointer; margin-left: 12px; }
         
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
         .modal-content { background: #1e212b; border-radius: 24px; padding: 25px; width: 90%; max-width: 340px; border: 1px solid #2d313f; }
-        .modal input { width: 100%; padding: 14px; background: #12141c; border: 1px solid #2d313f; border-radius: 12px; margin: 10px 0; color: white; font-size: 16px; }
+        .modal input { width: 100%; padding: 14px; background: #12141c; border: 1px solid #2d313f; border-radius: 12px; margin: 8px 0; color: white; font-size: 16px; }
+        
+        .cat-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+        .cat-name { font-weight: 600; font-size: 16px; color: #ffffff; cursor: pointer; border-bottom: 1px dashed #454a5f; }
+        .cat-amounts { text-align: right; font-size: 14px; }
+        .progress-container { height: 8px; background: #12141c; border-radius: 4px; overflow: hidden; margin: 10px 0; }
+        .progress-bar { height: 100%; transition: width 0.5s ease, background-color 0.5s ease; }
         
         .history-item { background: #1e212b; padding: 15px; border-radius: 16px; margin-bottom: 10px; display: flex; justify-content: space-between; border: 1px solid #2d313f; align-items: center; }
         .history-info small { color: #8a8d9b; font-size: 11px; display: block; }
+        .paid-text { color: #34c759 !important; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="version-tag">v0.1.4</div>
+        <div class="version-tag">v0.1.6</div>
         <div class="header">
             <h1>Mis Gastos</h1>
             <p id="currentMonth"></p>
@@ -80,7 +85,7 @@
                 <button class="btn btn-income" onclick="openIncomeModal('Uber')">⚫ Ingreso Uber</button>
             </div>
         </div>
-        
+
         <div id="tab-diarios" class="section">
             <div class="card">
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px; text-align:center;">
@@ -92,7 +97,7 @@
                 <button class="btn btn-otros" onclick="openDailyModal('Varios')">📦 Otros Gastos</button>
             </div>
         </div>
-        
+
         <div id="tab-historial" class="section">
             <div id="historyList"></div>
             <button class="btn btn-excel" onclick="exportToExcel()">📊 Exportar a Excel</button>
@@ -101,11 +106,12 @@
 
     <div class="modal" id="modal">
         <div class="modal-content">
-            <h3 id="modalTitle" style="color:white; text-align:center; margin-bottom:15px;"></h3>
-            <input type="text" id="modalName" placeholder="Nombre">
+            <h3 id="modalTitle"></h3>
+            <input type="text" id="modalName" placeholder="Nombre (ej. Colegio)">
             <input type="number" id="modalAmount" placeholder="Monto $" inputmode="numeric">
             <input type="date" id="modalDate">
-            <div style="display:flex; gap:10px;">
+            <div id="modalExtraBtns"></div>
+            <div style="display:flex; gap:10px; margin-top:10px;">
                 <button class="btn" style="background:#454a5f" onclick="closeModal()">Cerrar</button>
                 <button class="btn" style="background:#3d5afe" onclick="confirmAction()">Guardar</button>
             </div>
@@ -113,7 +119,7 @@
     </div>
 
     <script>
-        let categories = JSON.parse(localStorage.getItem('categories')) || [{id:1,name:'Colegio',goal:0,current:0},{id:2,name:'Internet',goal:0,current:0},{id:3,name:'Seguro',goal:0,current:0}];
+        let categories = JSON.parse(localStorage.getItem('categories')) || [{id:1, name:'Colegio', goal: 0},{id:2, name:'Internet', goal: 0},{id:3, name:'Seguro', goal: 0}];
         let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
         let incomes = JSON.parse(localStorage.getItem('incomes')) || [];
         let currentType = '', currentId = null;
@@ -131,8 +137,7 @@
         }
 
         function showTab(t) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.tab').forEach(tb => tb.classList.remove('active'));
+            document.querySelectorAll('.section, .tab').forEach(el => el.classList.remove('active'));
             document.getElementById('tab-'+t).classList.add('active');
             event.currentTarget.classList.add('active');
             renderAll();
@@ -144,35 +149,112 @@
             renderHistory();
         }
 
+        function renderCategories() {
+            let html = '';
+            let totalExpected = 0, totalPaidReal = 0;
+
+            categories.forEach(cat => {
+                let paidReal = expenses.filter(e => e.type === cat.name).reduce((s,e) => s + e.amount, 0);
+                totalExpected += (cat.goal || 0);
+                totalPaidReal += paidReal;
+
+                let pct = cat.goal > 0 ? Math.min(Math.round((paidReal/cat.goal)*100), 100) : 0;
+                let isFull = pct >= 100;
+
+                html += `<div class="card">
+                    <div class="cat-header">
+                        <span class="cat-name" onclick="openEditCategory(${cat.id})">${cat.name} ✏️</span>
+                        <div class="cat-amounts">
+                            <span class="${isFull?'paid-text':''}">$${paidReal.toLocaleString()}</span> / 
+                            <small style="color:#8a8d9b">$${(cat.goal || 0).toLocaleString()}</small>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width:${pct}%; background-color:#34c759"></div>
+                    </div>
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn" style="background:#2d313f; margin:0; flex:3; padding:8px; font-size:12px;" onclick="openPaymentModal(${cat.id})">Registrar Pago</button>
+                        <button class="btn" style="background:#12141c; border:1px solid #2d313f; margin:0; flex:1; padding:8px; font-size:12px;" onclick="resetCategory(${cat.id})">🔄</button>
+                    </div>
+                </div>`;
+            });
+
+            document.getElementById('categoriesList').innerHTML = html;
+            let totalPct = totalExpected > 0 ? Math.round((totalPaidReal/totalExpected)*100) : 0;
+            document.getElementById('totalPercent').textContent = totalPct + '%';
+            document.getElementById('totalPercent').style.color = totalPct >= 100 ? '#34c759' : '#3d5afe';
+            document.getElementById('totalPaid').textContent = '$' + totalPaidReal.toLocaleString();
+            document.getElementById('totalGoal').textContent = '$' + totalExpected.toLocaleString();
+        }
+
+        function openEditCategory(id) {
+            currentId = id; currentType = 'edit_category'; resetModal();
+            let cat = categories.find(c => c.id === id);
+            document.getElementById('modalTitle').textContent = 'Editar Categoría';
+            document.getElementById('modalName').style.display = 'block';
+            document.getElementById('modalName').value = cat.name;
+            document.getElementById('modalAmount').value = cat.goal;
+            document.getElementById('modalDate').style.display = 'none';
+            document.getElementById('modalExtraBtns').innerHTML = `<button class="btn btn-gnc" onclick="deleteCategory(${id})">Borrar Categoría</button>`;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function openPaymentModal(id) { 
+            currentId=id; currentType='payment'; resetModal(); 
+            document.getElementById('modalTitle').textContent='Registrar Pago'; 
+            document.getElementById('modalDate').style.display='none'; 
+            document.getElementById('modal').style.display='flex'; 
+        }
+
+        function resetCategory(id) {
+            if(!confirm("¿Quieres volver a cero los pagos de esta categoría?")) return;
+            let cat = categories.find(c => c.id === id);
+            expenses = expenses.filter(e => e.type !== cat.name);
+            saveAndRefresh();
+        }
+
+        function confirmAction() {
+            let name = document.getElementById('modalName').value;
+            let amt = parseFloat(document.getElementById('modalAmount').value) || 0;
+            let now = new Date(), fDate = document.getElementById('modalDate').value + 'T' + now.toTimeString().split(' ')[0];
+
+            if(currentType==='category') {
+                categories.push({id:Date.now(), name: name || 'S/N', goal:amt});
+            } 
+            else if(currentType==='edit_category') {
+                let cat = categories.find(c => c.id === currentId);
+                expenses.forEach(e => { if(e.type === cat.name) e.type = name; });
+                cat.name = name; cat.goal = amt;
+            }
+            else if(currentType==='payment') {
+                let cat = categories.find(c => c.id === currentId);
+                expenses.push({id:Date.now(), type:cat.name, amount:amt, fDate: new Date().toISOString()});
+            }
+            else if(currentType==='income' || currentType==='expense') {
+                let list = currentType==='income' ? incomes : expenses;
+                list.push({id:Date.now(), type:currentId, amount:amt, fDate:fDate});
+            }
+            saveAndRefresh();
+        }
+
+        function saveAndRefresh() {
+            localStorage.setItem('categories', JSON.stringify(categories));
+            localStorage.setItem('expenses', JSON.stringify(expenses));
+            localStorage.setItem('incomes', JSON.stringify(incomes));
+            closeModal(); renderAll();
+        }
+
         function deleteItem(id, type) {
             if(!confirm("¿Borrar este movimiento?")) return;
             if(type === 'inc') incomes = incomes.filter(i => i.id !== id);
             else expenses = expenses.filter(e => e.id !== id);
-            localStorage.setItem('expenses', JSON.stringify(expenses));
-            localStorage.setItem('incomes', JSON.stringify(incomes));
-            renderAll();
+            saveAndRefresh();
         }
 
-        function renderCategories() {
-            let html = '';
-            categories.forEach(cat => {
-                let realCurrent = expenses.filter(e => e.type === cat.name).reduce((s,e) => s + e.amount, 0);
-                let pct = cat.goal > 0 ? Math.min(Math.round((realCurrent/cat.goal)*100), 100) : 0;
-                html += `<div class="card" style="padding:15px; margin-bottom:10px;">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                        <span>${cat.name}</span>
-                        <span>$${realCurrent.toLocaleString()} / <small>$${cat.goal.toLocaleString()}</small></span>
-                    </div>
-                    <div style="height:6px; background:#12141c; border-radius:3px;"><div style="height:100%; width:${pct}%; background:#3d5afe; border-radius:3px;"></div></div>
-                    <button class="btn" style="background:#2d313f; margin-top:10px; padding:8px; font-size:12px;" onclick="openPaymentModal(${cat.id})">Registrar Pago</button>
-                </div>`;
-            });
-            document.getElementById('categoriesList').innerHTML = html;
-            let tGoal = categories.reduce((s,c)=>s+(c.goal||0),0);
-            let tCur = categories.reduce((s,c) => s + expenses.filter(e => e.type === c.name).reduce((sum,ex) => sum + ex.amount, 0), 0);
-            document.getElementById('totalPercent').textContent = (tGoal>0?Math.round((tCur/tGoal)*100):0)+'%';
-            document.getElementById('totalPaid').textContent = '$'+tCur.toLocaleString();
-            document.getElementById('totalGoal').textContent = '$'+tGoal.toLocaleString();
+        function deleteCategory(id) {
+            if(!confirm("¿Eliminar esta categoría?")) return;
+            categories = categories.filter(c => c.id !== id);
+            saveAndRefresh();
         }
 
         function updateTotals() {
@@ -189,7 +271,7 @@
         function renderHistory() {
             let all = [...expenses.map(e=>({...e,k:'exp'})), ...incomes.map(i=>({...i,k:'inc'}))].sort((a,b) => new Date(b.fDate) - new Date(a.fDate));
             let html = '';
-            all.slice(0, 25).forEach(m => {
+            all.slice(0, 20).forEach(m => {
                 let icon = m.type==='GNC'?'⛽':m.type==='Comida'?'🍔':m.type==='Varios'?'📦':m.type==='Didi'?'🟠':'⚫';
                 let d = new Date(m.fDate), dStr = d.toLocaleDateString('es-AR', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'});
                 html += `<div class="history-item">
@@ -204,29 +286,10 @@
         }
 
         function openCategoryModal() { currentType='category'; resetModal(); document.getElementById('modalTitle').textContent='Nueva Categoría'; document.getElementById('modalName').style.display='block'; document.getElementById('modalDate').style.display='none'; document.getElementById('modal').style.display='flex'; }
-        function openPaymentModal(id) { currentId=id; currentType='payment'; resetModal(); document.getElementById('modalTitle').textContent='Registrar Pago'; document.getElementById('modalDate').style.display='none'; document.getElementById('modal').style.display='flex'; }
         function openIncomeModal(t) { currentId=t; currentType='income'; resetModal(); document.getElementById('modalTitle').textContent='Ingreso '+t; document.getElementById('modal').style.display='flex'; }
         function openDailyModal(t) { currentId=t; currentType='expense'; resetModal(); document.getElementById('modalTitle').textContent='Gasto '+t; document.getElementById('modal').style.display='flex'; }
-        function resetModal() { document.getElementById('modalName').style.display='none'; document.getElementById('modalDate').style.display='block'; document.getElementById('modalDate').value = new Date().toISOString().split('T')[0]; document.getElementById('modalAmount').value = ''; }
+        function resetModal() { document.getElementById('modalName').style.display='none'; document.getElementById('modalName').value=''; document.getElementById('modalExtraBtns').innerHTML=''; document.getElementById('modalDate').style.display='block'; document.getElementById('modalDate').value = new Date().toISOString().split('T')[0]; document.getElementById('modalAmount').value = ''; }
         function closeModal() { document.getElementById('modal').style.display='none'; }
-
-        function confirmAction() {
-            let amt = parseFloat(document.getElementById('modalAmount').value);
-            if(isNaN(amt) || amt <= 0) return;
-            let now = new Date(), fDate = document.getElementById('modalDate').value + 'T' + now.toTimeString().split(' ')[0];
-            if(currentType==='category') {
-                categories.push({id:Date.now(), name:document.getElementById('modalName').value || 'S/N', goal:amt, current:0});
-                localStorage.setItem('categories', JSON.stringify(categories));
-            } else if(currentType==='payment') {
-                let c = categories.find(x=>x.id===currentId);
-                if(c) { expenses.push({id:Date.now(), type:c.name, amount:amt, fDate:fDate}); }
-            } else if(currentType==='income') incomes.push({id:Date.now(), type:currentId, amount:amt, fDate:fDate});
-            else if(currentType==='expense') expenses.push({id:Date.now(), type:currentId, amount:amt, fDate:fDate});
-            localStorage.setItem('expenses', JSON.stringify(expenses));
-            localStorage.setItem('incomes', JSON.stringify(incomes));
-            closeModal(); renderAll();
-        }
-
         function exportToExcel() {
             let csv = "Fecha,Hora,Tipo,Mov,Monto\n";
             [...expenses.map(e=>({...e,k:'Gasto'})), ...incomes.map(i=>({...i,k:'Ingreso'}))].forEach(r => {
