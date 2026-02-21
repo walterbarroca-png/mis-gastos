@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mis Gastos PRO v0.1.6</title>
+    <title>Mis Gastos PRO v0.1.7</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: sans-serif; background-color: #12141c; color: #e0e0e0; padding: 15px; padding-bottom: 90px; }
@@ -27,7 +27,7 @@
         .btn-gnc { background-color: #ff3b30; }
         .btn-comida { background-color: #ffcc00; color: #000; }
         .btn-otros { background-color: #af52de; }
-        .btn-income { background: #1e212b; color: #3d5afe; border: 1px solid #3d5afe; }
+        .btn-income { background: #1e212b; color: #e0e0e0; border: 1px solid #2d313f; text-align: left; display: flex; align-items: center; gap: 10px; }
         .btn-primary { background: transparent; color: #3d5afe; border: 2px dashed #3d5afe; margin-top: 5px; }
         .btn-excel { background: #28a745; margin-top: 20px; }
 
@@ -41,9 +41,8 @@
         
         .cat-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
         .cat-name { font-weight: 600; font-size: 16px; color: #ffffff; cursor: pointer; border-bottom: 1px dashed #454a5f; }
-        .cat-amounts { text-align: right; font-size: 14px; }
         .progress-container { height: 8px; background: #12141c; border-radius: 4px; overflow: hidden; margin: 10px 0; }
-        .progress-bar { height: 100%; transition: width 0.5s ease, background-color 0.5s ease; }
+        .progress-bar { height: 100%; transition: width 0.5s ease; }
         
         .history-item { background: #1e212b; padding: 15px; border-radius: 16px; margin-bottom: 10px; display: flex; justify-content: space-between; border: 1px solid #2d313f; align-items: center; }
         .history-info small { color: #8a8d9b; font-size: 11px; display: block; }
@@ -52,7 +51,7 @@
 </head>
 <body>
     <div class="container">
-        <div class="version-tag">v0.1.6</div>
+        <div class="version-tag">v0.1.7</div>
         <div class="header">
             <h1>Mis Gastos</h1>
             <p id="currentMonth"></p>
@@ -81,8 +80,12 @@
                 <div id="balanceAmount" style="font-size: 32px; font-weight: 700;">$0</div>
             </div>
             <div class="card">
-                <button class="btn btn-income" onclick="openIncomeModal('Didi')">🟠 Ingreso Didi</button>
-                <button class="btn btn-income" onclick="openIncomeModal('Uber')">⚫ Ingreso Uber</button>
+                <button class="btn btn-income" onclick="openIncomeModal('Didi')">
+                    <span style="color: #ffa500; font-size: 20px;">●</span> Ingreso Didi
+                </button>
+                <button class="btn btn-income" onclick="openIncomeModal('Uber')">
+                    <span style="color: #8a8d9b; font-size: 20px;">●</span> Ingreso Uber
+                </button>
             </div>
         </div>
 
@@ -107,7 +110,7 @@
     <div class="modal" id="modal">
         <div class="modal-content">
             <h3 id="modalTitle"></h3>
-            <input type="text" id="modalName" placeholder="Nombre (ej. Colegio)">
+            <input type="text" id="modalName" placeholder="Nombre">
             <input type="number" id="modalAmount" placeholder="Monto $" inputmode="numeric">
             <input type="date" id="modalDate">
             <div id="modalExtraBtns"></div>
@@ -152,15 +155,12 @@
         function renderCategories() {
             let html = '';
             let totalExpected = 0, totalPaidReal = 0;
-
             categories.forEach(cat => {
                 let paidReal = expenses.filter(e => e.type === cat.name).reduce((s,e) => s + e.amount, 0);
                 totalExpected += (cat.goal || 0);
                 totalPaidReal += paidReal;
-
                 let pct = cat.goal > 0 ? Math.min(Math.round((paidReal/cat.goal)*100), 100) : 0;
                 let isFull = pct >= 100;
-
                 html += `<div class="card">
                     <div class="cat-header">
                         <span class="cat-name" onclick="openEditCategory(${cat.id})">${cat.name} ✏️</span>
@@ -178,7 +178,6 @@
                     </div>
                 </div>`;
             });
-
             document.getElementById('categoriesList').innerHTML = html;
             let totalPct = totalExpected > 0 ? Math.round((totalPaidReal/totalExpected)*100) : 0;
             document.getElementById('totalPercent').textContent = totalPct + '%';
@@ -187,81 +186,11 @@
             document.getElementById('totalGoal').textContent = '$' + totalExpected.toLocaleString();
         }
 
-        function openEditCategory(id) {
-            currentId = id; currentType = 'edit_category'; resetModal();
-            let cat = categories.find(c => c.id === id);
-            document.getElementById('modalTitle').textContent = 'Editar Categoría';
-            document.getElementById('modalName').style.display = 'block';
-            document.getElementById('modalName').value = cat.name;
-            document.getElementById('modalAmount').value = cat.goal;
-            document.getElementById('modalDate').style.display = 'none';
-            document.getElementById('modalExtraBtns').innerHTML = `<button class="btn btn-gnc" onclick="deleteCategory(${id})">Borrar Categoría</button>`;
-            document.getElementById('modal').style.display = 'flex';
-        }
-
-        function openPaymentModal(id) { 
-            currentId=id; currentType='payment'; resetModal(); 
-            document.getElementById('modalTitle').textContent='Registrar Pago'; 
-            document.getElementById('modalDate').style.display='none'; 
-            document.getElementById('modal').style.display='flex'; 
-        }
-
-        function resetCategory(id) {
-            if(!confirm("¿Quieres volver a cero los pagos de esta categoría?")) return;
-            let cat = categories.find(c => c.id === id);
-            expenses = expenses.filter(e => e.type !== cat.name);
-            saveAndRefresh();
-        }
-
-        function confirmAction() {
-            let name = document.getElementById('modalName').value;
-            let amt = parseFloat(document.getElementById('modalAmount').value) || 0;
-            let now = new Date(), fDate = document.getElementById('modalDate').value + 'T' + now.toTimeString().split(' ')[0];
-
-            if(currentType==='category') {
-                categories.push({id:Date.now(), name: name || 'S/N', goal:amt});
-            } 
-            else if(currentType==='edit_category') {
-                let cat = categories.find(c => c.id === currentId);
-                expenses.forEach(e => { if(e.type === cat.name) e.type = name; });
-                cat.name = name; cat.goal = amt;
-            }
-            else if(currentType==='payment') {
-                let cat = categories.find(c => c.id === currentId);
-                expenses.push({id:Date.now(), type:cat.name, amount:amt, fDate: new Date().toISOString()});
-            }
-            else if(currentType==='income' || currentType==='expense') {
-                let list = currentType==='income' ? incomes : expenses;
-                list.push({id:Date.now(), type:currentId, amount:amt, fDate:fDate});
-            }
-            saveAndRefresh();
-        }
-
-        function saveAndRefresh() {
-            localStorage.setItem('categories', JSON.stringify(categories));
-            localStorage.setItem('expenses', JSON.stringify(expenses));
-            localStorage.setItem('incomes', JSON.stringify(incomes));
-            closeModal(); renderAll();
-        }
-
-        function deleteItem(id, type) {
-            if(!confirm("¿Borrar este movimiento?")) return;
-            if(type === 'inc') incomes = incomes.filter(i => i.id !== id);
-            else expenses = expenses.filter(e => e.id !== id);
-            saveAndRefresh();
-        }
-
-        function deleteCategory(id) {
-            if(!confirm("¿Eliminar esta categoría?")) return;
-            categories = categories.filter(c => c.id !== id);
-            saveAndRefresh();
-        }
-
         function updateTotals() {
             const now = new Date(), m = now.getMonth(), y = now.getFullYear(), todayStr = now.toISOString().split('T')[0];
-            let incM = incomes.filter(i => { let d=new Date(i.fDate); return d.getMonth()===m && d.getFullYear()===y }).reduce((s,i)=>s+i.amount,0);
-            let expM = expenses.filter(e => { let d=new Date(e.fDate); return d.getMonth()===m && d.getFullYear()===y }).reduce((s,e)=>s+e.amount,0);
-            document.getElementById('balanceAmount').textContent = '$' + (incM - expM).toLocaleString();
+            let totalInc = incomes.reduce((s,i)=>s+i.amount,0);
+            let totalExp = expenses.reduce((s,e)=>s+e.amount,0);
+            document.getElementById('balanceAmount').textContent = '$' + (totalInc - totalExp).toLocaleString();
             let gncH = expenses.filter(e => e.type === 'GNC' && e.fDate.startsWith(todayStr)).reduce((s,e)=>s+e.amount,0);
             let comH = expenses.filter(e => e.type === 'Comida' && e.fDate.startsWith(todayStr)).reduce((s,e)=>s+e.amount,0);
             document.getElementById('gncH').textContent = '$' + gncH.toLocaleString();
@@ -271,11 +200,11 @@
         function renderHistory() {
             let all = [...expenses.map(e=>({...e,k:'exp'})), ...incomes.map(i=>({...i,k:'inc'}))].sort((a,b) => new Date(b.fDate) - new Date(a.fDate));
             let html = '';
-            all.slice(0, 20).forEach(m => {
+            all.slice(0, 25).forEach(m => {
                 let icon = m.type==='GNC'?'⛽':m.type==='Comida'?'🍔':m.type==='Varios'?'📦':m.type==='Didi'?'🟠':'⚫';
-                let d = new Date(m.fDate), dStr = d.toLocaleDateString('es-AR', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'});
+                let d = new Date(m.fDate), dStr = d.toLocaleDateString('es-AR', {day:'2-digit', month:'2-digit'});
                 html += `<div class="history-item">
-                    <div class="history-info"><div>${icon} ${m.type}</div><small>${dStr} hs</small></div>
+                    <div class="history-info"><div>${icon} ${m.type}</div><small>${dStr}</small></div>
                     <div style="display:flex; align-items:center;">
                         <div style="font-weight:700; color:${m.k==='inc'?'#34c759':'#ff6b6b'}">${m.k==='inc'?'+':'-'}$${m.amount.toLocaleString()}</div>
                         <div class="delete-btn" onclick="deleteItem(${m.id}, '${m.k}')">🗑️</div>
@@ -285,20 +214,36 @@
             document.getElementById('historyList').innerHTML = html || '<p style="text-align:center;">Sin movimientos</p>';
         }
 
-        function openCategoryModal() { currentType='category'; resetModal(); document.getElementById('modalTitle').textContent='Nueva Categoría'; document.getElementById('modalName').style.display='block'; document.getElementById('modalDate').style.display='none'; document.getElementById('modal').style.display='flex'; }
+        function confirmAction() {
+            let name = document.getElementById('modalName').value;
+            let amt = parseFloat(document.getElementById('modalAmount').value) || 0;
+            let now = new Date(), fDate = document.getElementById('modalDate').value + 'T' + now.toTimeString().split(' ')[0];
+            if(currentType==='category') categories.push({id:Date.now(), name: name || 'S/N', goal:amt});
+            else if(currentType==='edit_category') {
+                let cat = categories.find(c => c.id === currentId);
+                expenses.forEach(e => { if(e.type === cat.name) e.type = name; });
+                cat.name = name; cat.goal = amt;
+            }
+            else if(currentType==='payment') {
+                let cat = categories.find(c => c.id === currentId);
+                expenses.push({id:Date.now(), type:cat.name, amount:amt, fDate: new Date().toISOString()});
+            }
+            else if(currentType==='income') incomes.push({id:Date.now(), type:currentId, amount:amt, fDate:fDate});
+            else if(currentType==='expense') expenses.push({id:Date.now(), type:currentId, amount:amt, fDate:fDate});
+            saveAndRefresh();
+        }
+
+        function openEditCategory(id) { currentId=id; currentType='edit_category'; resetModal(); let cat=categories.find(c=>c.id===id); document.getElementById('modalTitle').textContent='Editar Categoría'; document.getElementById('modalName').style.display='block'; document.getElementById('modalName').value=cat.name; document.getElementById('modalAmount').value=cat.goal; document.getElementById('modalDate').style.display='none'; document.getElementById('modalExtraBtns').innerHTML=`<button class="btn btn-gnc" onclick="deleteCategory(${id})">Borrar Categoría</button>`; document.getElementById('modal').style.display='flex'; }
+        function openPaymentModal(id) { currentId=id; currentType='payment'; resetModal(); document.getElementById('modalTitle').textContent='Registrar Pago'; document.getElementById('modalDate').style.display='none'; document.getElementById('modal').style.display='flex'; }
         function openIncomeModal(t) { currentId=t; currentType='income'; resetModal(); document.getElementById('modalTitle').textContent='Ingreso '+t; document.getElementById('modal').style.display='flex'; }
         function openDailyModal(t) { currentId=t; currentType='expense'; resetModal(); document.getElementById('modalTitle').textContent='Gasto '+t; document.getElementById('modal').style.display='flex'; }
-        function resetModal() { document.getElementById('modalName').style.display='none'; document.getElementById('modalName').value=''; document.getElementById('modalExtraBtns').innerHTML=''; document.getElementById('modalDate').style.display='block'; document.getElementById('modalDate').value = new Date().toISOString().split('T')[0]; document.getElementById('modalAmount').value = ''; }
+        function resetCategory(id) { if(confirm("¿Reiniciar pagos de esta categoría?")) { let cat=categories.find(c=>c.id===id); expenses=expenses.filter(e=>e.type!==cat.name); saveAndRefresh(); } }
+        function deleteCategory(id) { if(confirm("¿Eliminar categoría?")) { categories=categories.filter(c=>c.id!==id); saveAndRefresh(); } }
+        function deleteItem(id, type) { if(confirm("¿Borrar?")) { if(type==='inc') incomes=incomes.filter(i=>i.id!==id); else expenses=expenses.filter(e=>e.id!==id); saveAndRefresh(); } }
+        function saveAndRefresh() { localStorage.setItem('categories', JSON.stringify(categories)); localStorage.setItem('expenses', JSON.stringify(expenses)); localStorage.setItem('incomes', JSON.stringify(incomes)); closeModal(); renderAll(); }
+        function resetModal() { document.getElementById('modalName').style.display='none'; document.getElementById('modalName').value=''; document.getElementById('modalExtraBtns').innerHTML=''; document.getElementById('modalDate').style.display='block'; document.getElementById('modalDate').value=new Date().toISOString().split('T')[0]; document.getElementById('modalAmount').value=''; }
         function closeModal() { document.getElementById('modal').style.display='none'; }
-        function exportToExcel() {
-            let csv = "Fecha,Hora,Tipo,Mov,Monto\n";
-            [...expenses.map(e=>({...e,k:'Gasto'})), ...incomes.map(i=>({...i,k:'Ingreso'}))].forEach(r => {
-                let d = new Date(r.fDate);
-                csv += `${d.toLocaleDateString()},${d.toLocaleTimeString()},${r.k},${r.type},${r.amount}\n`;
-            });
-            let blob = new Blob([csv], {type:'text/csv'});
-            let a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Gastos.csv'; a.click();
-        }
+        function exportToExcel() { let csv="Fecha,Tipo,Mov,Monto\n"; [...expenses.map(e=>({...e,k:'Gasto'})), ...incomes.map(i=>({...i,k:'Ingreso'}))].forEach(r=>{ let d=new Date(r.fDate); csv+=`${d.toLocaleDateString()},${r.k},${r.type},${r.amount}\n`; }); let blob=new Blob([csv], {type:'text/csv'}); let a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='Gastos.csv'; a.click(); }
         init();
     </script>
 </body>
